@@ -1,0 +1,6 @@
+{
+  "name": "SquareSnake Việt Nam",
+  "description": "Showroom Kỹ thuật số 24/7 chuyên cung cấp, cho thuê và vận hành thiết bị hiệu ứng sân khấu đỉnh cao: Kinetic Ball, Kinetic Ring, Laser Pro và LED Matrix tại Việt Nam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
