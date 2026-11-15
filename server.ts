@@ -1,7 +1,21 @@
+import crypto from 'crypto';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
+import {
+  DEFAULT_MEDIA_LIBRARY,
+  DEFAULT_PROJECTS,
+  DEFAULT_SITE_SETTINGS,
+  PRODUCT_MODELS,
+} from './src/data/figmaCatalog';
+import {
+  CmsMediaItem,
+  CmsProjectCase,
+  CustomerInboxItem,
+  FigmaProductModel,
+  SiteSettings,
+} from './src/types/cms';
 
 interface StoreCategory {
   category_id: number;
@@ -52,28 +66,25 @@ interface StoreProject {
   linkedCategory: 'kinetic' | 'laser' | 'led-matrix';
 }
 
-interface StoreContact {
-  contact_id: number;
-  reference_code: string;
-  customer_name: string;
-  phone: string;
-  company_agency: string;
-  event_date: string;
-  interested_categories: string[];
-  stage_requirements: string;
-  status: 'pending' | 'contacted' | 'quoted';
-  created_at: string;
-}
-
 interface DatabaseStore {
   categories: StoreCategory[];
   products: StoreProduct[];
   projects: StoreProject[];
-  contacts: StoreContact[];
+  contacts: CustomerInboxItem[];
+  siteSettings: SiteSettings;
+  catalogModels: FigmaProductModel[];
+  cmsProjects: CmsProjectCase[];
+  media: CmsMediaItem[];
 }
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
 const STORE_PATH = path.join(DATA_DIR, 'squaresnake_store.json');
+const UPLOADS_DIR = path.resolve(process.cwd(), 'public', 'uploads');
+
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE || 'SquareSnake@2026';
+const TOKEN_SECRET =
+  process.env.ADMIN_TOKEN_SECRET || crypto.randomBytes(32).toString('hex');
 
 const SEED_DATA: DatabaseStore = {
   categories: [
@@ -111,8 +122,8 @@ const SEED_DATA: DatabaseStore = {
       description:
         'Hệ thống ma trận điểm ảnh LED 5x5 chuyên dụng cho các concert quy mô lớn, tạo mảng ánh sáng nền blinder rực rỡ hoặc chạy ký tự, sóng pixel 3D sắc nét.',
       stageApplication:
-        'Lắp đặt làm phông nền sau sân khấu (backdrop matrix), viền khung truss hoặc treo trần nghiêng tạo hiệu ứng ánh sáng ấm mô phỏng đèn halogen kết hợp chớp pixel tốc độ cao.',
-      imageUrl: '/src/assets/images/product_led_matrix_1794743188837.jpg',
+        'Lắp đặt làm phông nền sau sân khấu (backdrop matrix), viền khung truss hoặc treo trần nghiêng.',
+      imageUrl: '/assets/squaresnake/led-matrix.jpg',
       highlightSpec1Label: 'Công suất quang',
       highlightSpec1Value: '25 × 30W COB (750W)',
       highlightSpec2Label: 'Điều khiển',
@@ -123,277 +134,13 @@ const SEED_DATA: DatabaseStore = {
       specs: [
         { label: 'Kích thước khung', value: '580 × 580 × 145 mm' },
         { label: 'Nguồn sáng', value: '25 × 30W Warm White 2700K + RGB Halo' },
-        { label: 'Công suất tiêu thụ', value: '820W tối đa' },
-        { label: 'Góc chiếu tia', value: '4.5° (Beam) / 28° (Wash phụ)' },
-        { label: 'Chuẩn điều khiển', value: 'DMX512 (7/25/100 CH), Art-Net, sACN' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 50/60Hz (PowerCON True1)' },
-        { label: 'Trọng lượng', value: '14.5 kg / panel' },
-        { label: 'Chuẩn bảo vệ', value: 'IP20 (Sân khấu trong nhà & mái che)' },
+        { label: 'Chuẩn điều khiển', value: 'DMX512, Art-Net, sACN' },
       ],
       riggingNotes: {
-        trussLoad: '14.5 kg / module (ghép tối đa 8 tầng dọc)',
-        suspensionPoints: '2 × Quick-Lock Clamp hoặc Flying Bar 4 điểm',
-        cableDrop: 'Khóa cam-lock liên kết cơ khí 4 cạnh',
-        controlChain: 'RJ45 Art-Net Loop + DMX 5-Pin Thru',
-      },
-    },
-    {
-      id: 'led-matrix-bar-10x10',
-      code: 'SS-LMB10',
-      name: 'LED Matrix Bar 10x10 Beam',
-      categoryKey: 'led-matrix',
-      categoryLabel: 'LED Matrix',
-      systemType: 'led-matrix',
-      tagline: 'Thanh LED 10 pixel tia hẹp 4° · Quét mảng không gian',
-      description:
-        'Thanh ma trận LED công suất cao cho phép tạo bức tường tia sáng thẳng đứng hoặc sắp xếp dạng lưới không gian đa lớp trên sân khấu EDM và fashion show.',
-      stageApplication:
-        'Tạo hàng rào ánh sáng cắt ngang sân khấu, phối hợp cùng khói lạnh (haze) để dựng khối hình học ánh sáng đồng bộ theo nhịp bass.',
-      imageUrl: '/src/assets/images/product_led_matrix_1794743188837.jpg',
-      highlightSpec1Label: 'Nguồn sáng',
-      highlightSpec1Value: '10 × 40W RGBW 4in1',
-      highlightSpec2Label: 'Góc mở tia',
-      highlightSpec2Value: '3.8° siêu hẹp',
-      stockCount: 96,
-      status: 'available',
-      isFeatured: false,
-      specs: [
-        { label: 'Kích thước khung', value: '1000 × 120 × 165 mm' },
-        { label: 'Nguồn sáng', value: '10 × 40W Osram RGBW COB' },
-        { label: 'Công suất tiêu thụ', value: '420W' },
-        { label: 'Tần số làm tươi', value: '18.000 Hz (Không nhấp nháy trên camera)' },
-        { label: 'Chuẩn điều khiển', value: 'DMX512 / Art-Net / RDM' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 50/60Hz' },
-        { label: 'Trọng lượng', value: '8.2 kg' },
-        { label: 'Chuẩn bảo vệ', value: 'IP65 (Dùng ngoài trời)' },
-      ],
-      riggingNotes: {
-        trussLoad: '8.2 kg / thanh',
-        suspensionPoints: '2 × Omega Bracket xoay 360°',
-        cableDrop: 'Liên kết nối tiếp tối đa 6 thanh qua chốt trượt',
-        controlChain: 'PowerCON True1 & Art-Net IP65',
-      },
-    },
-    {
-      id: 'laser-full-color-30w-ip65',
-      code: 'SS-LP30',
-      name: 'Laser Full-Color 30W IP65',
-      categoryKey: 'laser',
-      categoryLabel: 'Ánh sáng Laser',
-      systemType: 'laser-pro',
-      tagline: '30W Diode thuần RGB · Chống nước IP65 · Pangolin FB4',
-      description:
-        'Máy phát Laser công suất thực 30W chuẩn công nghiệp chống bụi nước IP65, chuyên trị các đại nhạc hội ngoài trời, sân vận động và quảng trường lớn với tia cắt không gian xa hàng km.',
-      stageApplication:
-        'Trình chiếu tia quét không gian trên cao (aerial beam show), mapping logo thương hiệu độ phân giải cao lên công trình kiến trúc hoặc màn nước ngoài trời.',
-      imageUrl: '/src/assets/images/product_laser_pro_1794743188964.jpg',
-      highlightSpec1Label: 'Công suất Laser',
-      highlightSpec1Value: '30W Pure Diode RGB',
-      highlightSpec2Label: 'Tốc độ quét',
-      highlightSpec2Value: '45Kpps @ 8° · Pangolin FB4',
-      stockCount: 24,
-      status: 'available',
-      isFeatured: true,
-      specs: [
-        { label: 'Kích thước máy', value: '485 × 340 × 260 mm' },
-        { label: 'Công suất thực', value: '30.000 mW (R: 8W / G: 10W / B: 12W)' },
-        { label: 'Tốc độ quét Galvo', value: '45Kpps ILDA (Mở góc tối đa 60°)' },
-        { label: 'Độ phân kỳ tia', value: '< 0.9 mrad (Tia mảnh sắc nét tầm xa)' },
-        { label: 'Chuẩn điều khiển', value: 'Tích hợp Pangolin FB4 (LAN/Art-Net/DMX)' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 950W' },
-        { label: 'Trọng lượng', value: '28.5 kg' },
-        { label: 'Chuẩn bảo vệ', value: 'IP65 (Vận hành ổn định dưới mưa)' },
-      ],
-      riggingNotes: {
-        trussLoad: '28.5 kg + khung gá chữ U chịu lực',
-        suspensionPoints: '2 × Kẹp Truss Heavy-Duty + Cáp an toàn 5mm',
-        cableDrop: 'Độ cao lắp đặt tối thiểu 3.2m trên đầu khán giả',
-        controlChain: 'Cáp mạng CAT6 trực tiếp từ bàn điều khiển Beyond/QuickShow',
-      },
-    },
-    {
-      id: 'laser-show-15w-analog',
-      code: 'SS-LP15',
-      name: 'Laser Show 15W Analog RGB',
-      categoryKey: 'laser',
-      categoryLabel: 'Ánh sáng Laser',
-      systemType: 'laser-pro',
-      tagline: '15W Analog RGB · Quét tia 40Kpps · Tối ưu sân khấu Indoor',
-      description:
-        'Hệ thống Laser RGB 15W điều biến Analog cho phép pha trộn hơn 16,7 triệu sắc thái màu mượt mà, kích thước nhỏ gọn dễ dàng bố trí dày đặc dọc giàn truss.',
-      stageApplication:
-        'Tạo hiệu ứng lưới tia, hầm ánh sáng và chuyển động đồ họa đồng bộ timecode cho nhà thi đấu, sự kiện ra mắt sản phẩm và tiệc gala doanh nghiệp.',
-      imageUrl: '/src/assets/images/product_laser_pro_1794743188964.jpg',
-      highlightSpec1Label: 'Công suất Laser',
-      highlightSpec1Value: '15W Analog RGB',
-      highlightSpec2Label: 'Tốc độ quét',
-      highlightSpec2Value: '40Kpps · ILDA / FB4',
-      stockCount: 36,
-      status: 'available',
-      isFeatured: false,
-      specs: [
-        { label: 'Kích thước máy', value: '360 × 270 × 195 mm' },
-        { label: 'Công suất thực', value: '15.000 mW (R: 4W / G: 5W / B: 6W)' },
-        { label: 'Tốc độ quét Galvo', value: '40Kpps @ 8°' },
-        { label: 'Độ phân kỳ tia', value: '< 1.0 mrad' },
-        { label: 'Chuẩn điều khiển', value: 'Pangolin FB4 / ILDA DB25 / DMX512' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 480W' },
-        { label: 'Trọng lượng', value: '15.2 kg' },
-        { label: 'Chuẩn bảo vệ', value: 'IP54' },
-      ],
-      riggingNotes: {
-        trussLoad: '15.2 kg / máy',
-        suspensionPoints: '1 × Coupler 500kg + 1 × Dây an toàn thép',
-        cableDrop: 'Nút dừng khẩn cấp E-Stop nối chuỗi toàn hệ thống',
-        controlChain: 'Ethernet Switch Gigabit tới hệ thống FB4',
-      },
-    },
-    {
-      id: 'kinetic-ball-rgbw-250',
-      code: 'SS-KB250',
-      name: 'Kinetic Ball RGBW 250mm',
-      categoryKey: 'kinetic',
-      categoryLabel: 'Hệ thống Kinetic',
-      systemType: 'kinetic-ball',
-      tagline: 'Bóng LED 250mm · Hành trình 6m–12m · Chuẩn Art-Net / Madrix',
-      description:
-        'Thiết bị chủ lực tạo nên thương hiệu SquareSnake Việt Nam: quả cầu khuếch tán ánh sáng 360 độ kết hợp tời kéo servo chính xác từng milimet, chuyển động mượt mà không rung lắc.',
-      stageApplication:
-        'Triển khai thành ma trận 32 đến 200+ quả cầu treo trên trần sân khấu hoặc khu vực sảnh triển lãm, lập trình sóng sin, khối chóp 3D và đổi màu theo tiết tấu.',
-      imageUrl: '/src/assets/images/product_kinetic_ball_1794743189815.jpg',
-      highlightSpec1Label: 'Hành trình cáp',
-      highlightSpec1Value: '6m – 12m (Tốc độ 1.0 m/s)',
-      highlightSpec2Label: 'Điều khiển',
-      highlightSpec2Value: 'Art-Net / DMX512 / Madrix',
-      stockCount: 220,
-      status: 'available',
-      isFeatured: true,
-      specs: [
-        { label: 'Kích thước cụm tời', value: '320 × 210 × 280 mm' },
-        { label: 'Đường kính bóng', value: '250 mm (Vỏ PC chống va đập)' },
-        { label: 'Hành trình nâng hạ', value: '6m / 9m / 12m tùy chọn' },
-        { label: 'Tốc độ di chuyển', value: '0.1 – 1.0 m/s (Lập trình gia tốc mượt)' },
-        { label: 'Công suất LED', value: '18W RGBW 360° (Độ sáng đồng đều)' },
-        { label: 'Chuẩn điều khiển', value: 'Art-Net, DMX512 (8 CH), Madrix 3D' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 110W / cụm' },
-        { label: 'Trọng lượng tổng', value: '7.8 kg / bộ (Cảm biến quá tải kép)' },
-      ],
-      riggingNotes: {
-        trussLoad: '7.8 kg / điểm (Lưới chuẩn cách tâm 0.8m–1.2m)',
-        suspensionPoints: '2 × Kẹp Truss nhôm đúc + Cáp an toàn',
-        cableDrop: 'Cáp đồng trục kép vừa tải lực vừa cấp nguồn 24V DC cho bóng',
-        controlChain: 'Cấp nguồn PowerCON liên hoàn 10 bộ/line + Art-Net Switch',
-      },
-    },
-    {
-      id: 'kinetic-sphere-pro-350',
-      code: 'SS-KB350',
-      name: 'Kinetic Sphere Pro 350mm',
-      categoryKey: 'kinetic',
-      categoryLabel: 'Hệ thống Kinetic',
-      systemType: 'kinetic-ball',
-      tagline: 'Bóng cỡ lớn 350mm · Tốc độ 1.2m/s · Khán phòng trần cao 15m+',
-      description:
-        'Phiên bản nâng cấp đường kính lớn 350mm dành cho các nhà thi đấu và quảng trường trần cao, đảm bảo điểm ảnh sắc rõ ngay cả ở khoảng cách khán giả trên 80m.',
-      stageApplication:
-        'Phù hợp cho lễ trao giải truyền hình trực tiếp, đại nhạc hội sân vận động hoặc không gian atrium trung tâm thương mại trần cao.',
-      imageUrl: '/src/assets/images/product_kinetic_ball_1794743189815.jpg',
-      highlightSpec1Label: 'Hành trình cáp',
-      highlightSpec1Value: '12m (Tốc độ 1.2 m/s)',
-      highlightSpec2Label: 'Độ sáng',
-      highlightSpec2Value: '32W High-Output RGBW',
-      stockCount: 80,
-      status: 'available',
-      isFeatured: false,
-      specs: [
-        { label: 'Kích thước cụm tời', value: '350 × 230 × 310 mm' },
-        { label: 'Đường kính bóng', value: '350 mm (Khuếch tán mờ cao cấp)' },
-        { label: 'Hành trình nâng hạ', value: '12 m (Tùy chọn mở rộng 15m)' },
-        { label: 'Tốc độ di chuyển', value: 'Tối đa 1.2 m/s (Độ ồn < 36dB)' },
-        { label: 'Chuẩn điều khiển', value: 'Art-Net / sACN / DMX512 / Madrix' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 145W' },
-        { label: 'Trọng lượng tổng', value: '9.4 kg / bộ' },
-        { label: 'Tính năng an toàn', value: 'Phanh điện từ tự khóa khi mất điện' },
-      ],
-      riggingNotes: {
-        trussLoad: '9.4 kg / điểm treo',
-        suspensionPoints: '2 × Trigger Clamp chịu tải 250kg',
-        cableDrop: 'Cáp thép không xoắn 4mm kèm lõi đồng tín hiệu',
-        controlChain: 'Art-Net redundant 2 cổng dự phòng',
-      },
-    },
-    {
-      id: 'kinetic-ring-double-axis-120',
-      code: 'SS-KR120',
-      name: 'Kinetic Ring Double Axis 1.2m',
-      categoryKey: 'kinetic',
-      categoryLabel: 'Hệ thống Kinetic',
-      systemType: 'kinetic-ring',
-      tagline: '3 motor độc lập · Nghiêng góc 360° · LED Pixel 2 mặt',
-      description:
-        'Vòng ánh sáng động cơ học với đường kính 1.2m được treo bởi 3 cụm tời servo độc lập, cho phép vừa nâng hạ vừa nghiêng đa trục, xoay đảo chiều ấn tượng trong không trung.',
-      stageApplication:
-        'Điểm nhấn thị giác trung tâm phía trên ca sĩ, DJ hoặc khu vực trưng bày xe hơi, tạo hiệu ứng vòng hào quang chuyển động không gian 3 chiều.',
-      imageUrl: '/src/assets/images/product_kinetic_ring_1794743191297.jpg',
-      highlightSpec1Label: 'Cấu hình nâng',
-      highlightSpec1Value: '3 Motor độc lập · Nghiêng 360°',
-      highlightSpec2Label: 'Đường kính vòng',
-      highlightSpec2Value: '1.2m · 144 Pixel SMD5050',
-      stockCount: 32,
-      status: 'available',
-      isFeatured: true,
-      specs: [
-        { label: 'Đường kính vòng LED', value: '1.200 mm (Bản khung 45 × 45 mm)' },
-        { label: 'Hệ thống truyền động', value: '3 × Servo Winch đồng bộ đa trục' },
-        { label: 'Hành trình nâng hạ', value: '9.0 m (Góc nghiêng 0° – 360°)' },
-        { label: 'Tốc độ di chuyển', value: '0.8 m/s (Độ chính xác vị trí ±1mm)' },
-        { label: 'Công suất LED', value: '120W RGB Pixel (360° hai mặt phát sáng)' },
-        { label: 'Chuẩn điều khiển', value: 'Art-Net / Madrix / GrandMA3 Timecode' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 360W / bộ hoàn chỉnh' },
-        { label: 'Trọng lượng tổng', value: '24.0 kg (Bao gồm 3 cụm tời + vòng)' },
-      ],
-      riggingNotes: {
-        trussLoad: '24 kg phân bổ đều lên 3 điểm tam giác đều trên truss',
-        suspensionPoints: '3 × Điểm treo độc lập (Tam giác cạnh 1.35m)',
-        cableDrop: '3 cáp tải tích hợp cấp nguồn không lộ dây rời',
-        controlChain: 'Đồng bộ Art-Net Universe riêng cho chuyển động & LED',
-      },
-    },
-    {
-      id: 'kinetic-ring-tri-winch-180',
-      code: 'SS-KR180',
-      name: 'Kinetic Ring Tri-Winch 1.8m',
-      categoryKey: 'kinetic',
-      categoryLabel: 'Hệ thống Kinetic',
-      systemType: 'kinetic-ring',
-      tagline: 'Vòng đại 1.8m · Hành trình 10m · Tối ưu sân khấu lớn',
-      description:
-        'Thiết kế vòng LED khổ lớn 1.8m với độ cứng vững hợp kim nhôm hàng không, có thể xếp lồng đồng tâm nhiều vòng để tạo cấu trúc xoắn ốc trên sân khấu.',
-      stageApplication:
-        'Phối hợp từ 4 đến 12 vòng treo đồng tâm tại sân khấu âm nhạc, lễ hội đếm ngược và trình diễn thời trang cao cấp.',
-      imageUrl: '/src/assets/images/product_kinetic_ring_1794743191297.jpg',
-      highlightSpec1Label: 'Đường kính vòng',
-      highlightSpec1Value: '1.8m · 216 Pixel kép',
-      highlightSpec2Label: 'Hành trình nâng',
-      highlightSpec2Value: '10.0m · 3 Winch đồng bộ',
-      stockCount: 16,
-      status: 'available',
-      isFeatured: false,
-      specs: [
-        { label: 'Đường kính vòng LED', value: '1.800 mm (Hợp kim nhôm 6061)' },
-        { label: 'Hệ thống truyền động', value: '3 × Heavy-Duty DMX Winch' },
-        { label: 'Hành trình nâng hạ', value: '10.0 m' },
-        { label: 'Tốc độ di chuyển', value: '0.75 m/s' },
-        { label: 'Công suất LED', value: '180W RGBW Pixel' },
-        { label: 'Chuẩn điều khiển', value: 'Art-Net / DMX512 / Madrix' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 480W' },
-        { label: 'Trọng lượng tổng', value: '31.5 kg / bộ hoàn chỉnh' },
-      ],
-      riggingNotes: {
-        trussLoad: '31.5 kg (Yêu cầu Truss hộp tối thiểu 400×400mm)',
-        suspensionPoints: '3 × Kẹp Truss công nghiệp + Safety Cable',
-        cableDrop: 'Cân chỉnh điểm 0 tự động trước giờ G bằng laser thước',
-        controlChain: 'Quản lý tập trung qua tủ điện phân phối DMX Opto-Splitter',
+        trussLoad: '14.5 kg / module',
+        suspensionPoints: '2 × Quick-Lock Clamp',
+        cableDrop: 'Khóa cam-lock 4 cạnh',
+        controlChain: 'RJ45 Art-Net Loop',
       },
     },
   ],
@@ -408,71 +155,13 @@ const SEED_DATA: DatabaseStore = {
       scaleMetric: '35.000 Khán giả · 142 Thiết bị',
       stageDimension: '48m × 22m × 18m',
       summary:
-        'Triển khai ma trận 96 quả Kinetic Ball 350mm kết hợp 12 máy Laser 30W IP65 quét tia đồng bộ Timecode với bàn điều khiển GrandMA3 suốt 4 giờ diễn ngoài trời.',
-      imageUrl: '/src/assets/images/hero_stage_show_1794743188164.jpg',
+        'Triển khai ma trận 96 quả Kinetic Ball 350mm kết hợp 12 máy Laser 30W IP65 quét tia đồng bộ Timecode với bàn điều khiển GrandMA3.',
+      imageUrl: '/assets/squaresnake/hero-concert.jpg',
       equipmentUsed: [
         '96 × Kinetic Sphere Pro 350mm',
         '12 × Laser Full-Color 30W IP65',
-        '32 × LED Matrix Panel 5x5 Pixel',
       ],
       linkedCategory: 'laser',
-    },
-    {
-      id: 'proj-future-mobility-expo',
-      title: 'Triển Lãm Ô Tô Tương Lai SECC',
-      eventType: 'Ra Mắt Sản Phẩm & Triển Lãm',
-      clientName: 'VinMotion Auto Group',
-      location: 'SECC Quận 7, TP. Hồ Chí Minh',
-      date: 'Tháng 09, 2026',
-      scaleMetric: '12.000 Khách tham quan/ngày',
-      stageDimension: '28m × 16m × 11m',
-      summary:
-        'Lắp đặt 12 vòng Kinetic Ring Double Axis 1.2m xếp tầng đồng tâm phía trên khu vực trưng bày xe concept, lập trình chuyển động liên hoàn 10 giờ/ngày.',
-      imageUrl: '/src/assets/images/product_kinetic_ring_1794743191297.jpg',
-      equipmentUsed: [
-        '12 × Kinetic Ring Double Axis 1.2m',
-        '48 × Kinetic Ball RGBW 250mm',
-        '16 × LED Matrix Bar 10x10 Beam',
-      ],
-      linkedCategory: 'kinetic',
-    },
-    {
-      id: 'proj-countdown-gala',
-      title: 'Countdown Gala Phố Đi Bộ Nguyễn Huệ',
-      eventType: 'Sự Kiện Cộng Đồng Quy Mô Lớn',
-      clientName: 'Sở Văn Hóa & Nghệ Thuật TP.HCM',
-      location: 'Quận 1, TP. Hồ Chí Minh',
-      date: 'Tháng 08, 2026',
-      scaleMetric: '50.000+ Khán giả trực tiếp',
-      stageDimension: '36m × 18m × 16m',
-      summary:
-        'Tổ hợp LED Matrix 5x5 làm bức tường ánh sáng chủ đạo cùng 8 hệ thống Laser 30W IP65 chống ẩm sương đêm, đảm bảo vận hành liên tục không gián đoạn.',
-      imageUrl: '/src/assets/images/product_kinetic_ball_1794743189815.jpg',
-      equipmentUsed: [
-        '40 × LED Matrix Panel 5x5 Pixel',
-        '8 × Laser Full-Color 30W IP65',
-        '64 × Kinetic Ball RGBW 250mm',
-      ],
-      linkedCategory: 'led-matrix',
-    },
-    {
-      id: 'proj-tech-summit-ncc',
-      title: 'Diễn Đàn Công Nghệ Quốc Gia',
-      eventType: 'Hội Nghị & Lễ Trao Giải Truyền Hình',
-      clientName: 'FPT Digital & VTV Events',
-      location: 'Trung Tâm Hội Nghị Quốc Gia, Hà Nội',
-      date: 'Tháng 07, 2026',
-      scaleMetric: '3.500 Đại biểu · Phát sóng VTV',
-      stageDimension: '24m × 12m × 10m',
-      summary:
-        'Hệ thống Kinetic Ball 250mm độ ồn siêu thấp (< 35dB) kết hợp Laser 15W Analog tần số quét mượt không sọc hình trên máy quay truyền hình 4K.',
-      imageUrl: '/src/assets/images/product_led_matrix_1794743188837.jpg',
-      equipmentUsed: [
-        '80 × Kinetic Ball RGBW 250mm',
-        '6 × Laser Show 15W Analog RGB',
-        '6 × Kinetic Ring Double Axis 1.2m',
-      ],
-      linkedCategory: 'kinetic',
     },
   ],
   contacts: [
@@ -480,40 +169,103 @@ const SEED_DATA: DatabaseStore = {
       contact_id: 1,
       reference_code: 'SS-BG-1001',
       customer_name: 'Trần Hoàng Nam',
-      phone: '0912345678',
+      phone: 'nam.tran@apexevent.vn · 0912345678',
       company_agency: 'Apex Event Production',
       event_date: '2026-12-24',
-      interested_categories: ['Kinetic Ball', 'Laser'],
-      stage_requirements: 'Sân khấu 28m × 14m × 12m (trong nhà). Cần khoảng 48 quả Kinetic Ball 250mm và 4 máy Laser 15W.',
+      interested_categories: ['Kinetic Balls', '30W Laser'],
+      stage_requirements:
+        'Sân khấu 28m × 14m × 12m (trong nhà). Cần khoảng 48 quả Kinetic Balls và 4 máy Laser 30W.',
       status: 'quoted',
+      admin_note: 'Đã gửi báo giá sơ bộ qua email ngày 12/11.',
       created_at: '2026-11-10T09:30:00.000Z',
     },
     {
       contact_id: 2,
       reference_code: 'SS-BG-1002',
       customer_name: 'Lê Thảo Vy',
-      phone: '0987654321',
+      phone: 'vy.le@skylight.vn · 0987654321',
       company_agency: 'Skylight Creative Agency',
       event_date: '2026-12-31',
-      interested_categories: ['Kinetic Ring', 'LED Matrix'],
-      stage_requirements: 'Quảng trường ngoài trời 36m × 18m × 15m. Cần báo giá 8 vòng Kinetic Ring 1.2m và 24 panel LED Matrix 5x5.',
+      interested_categories: ['Kinetic Rings', '60-pixel LED Matrix'],
+      stage_requirements:
+        'Quảng trường ngoài trời 36m × 18m × 15m. Cần báo giá 8 vòng Kinetic Rings và 24 panel 60-pixel LED Matrix.',
       status: 'pending',
+      admin_note: '',
       created_at: '2026-11-14T15:10:00.000Z',
     },
   ],
+  siteSettings: JSON.parse(JSON.stringify(DEFAULT_SITE_SETTINGS)) as SiteSettings,
+  catalogModels: JSON.parse(JSON.stringify(PRODUCT_MODELS)) as FigmaProductModel[],
+  cmsProjects: JSON.parse(JSON.stringify(DEFAULT_PROJECTS)) as CmsProjectCase[],
+  media: JSON.parse(JSON.stringify(DEFAULT_MEDIA_LIBRARY)) as CmsMediaItem[],
 };
 
-function readStore(): DatabaseStore {
+function ensureDirectories() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  }
+}
+
+function hydrateStore(parsed: Partial<DatabaseStore>): {
+  store: DatabaseStore;
+  didMigrate: boolean;
+} {
+  let didMigrate = false;
+
+  const store: DatabaseStore = {
+    categories: Array.isArray(parsed.categories) ? parsed.categories : SEED_DATA.categories,
+    products: Array.isArray(parsed.products) ? parsed.products : SEED_DATA.products,
+    projects: Array.isArray(parsed.projects) ? parsed.projects : SEED_DATA.projects,
+    contacts: Array.isArray(parsed.contacts) ? parsed.contacts : SEED_DATA.contacts,
+    siteSettings: parsed.siteSettings
+      ? { ...DEFAULT_SITE_SETTINGS, ...parsed.siteSettings }
+      : (() => {
+          didMigrate = true;
+          return JSON.parse(JSON.stringify(DEFAULT_SITE_SETTINGS)) as SiteSettings;
+        })(),
+    catalogModels:
+      Array.isArray(parsed.catalogModels) && parsed.catalogModels.length > 0
+        ? parsed.catalogModels
+        : (() => {
+            didMigrate = true;
+            return JSON.parse(JSON.stringify(PRODUCT_MODELS)) as FigmaProductModel[];
+          })(),
+    cmsProjects:
+      Array.isArray(parsed.cmsProjects) && parsed.cmsProjects.length > 0
+        ? parsed.cmsProjects
+        : (() => {
+            didMigrate = true;
+            return JSON.parse(JSON.stringify(DEFAULT_PROJECTS)) as CmsProjectCase[];
+          })(),
+    media:
+      Array.isArray(parsed.media) && parsed.media.length > 0
+        ? parsed.media
+        : (() => {
+            didMigrate = true;
+            return JSON.parse(JSON.stringify(DEFAULT_MEDIA_LIBRARY)) as CmsMediaItem[];
+          })(),
+  };
+
+  return { store, didMigrate };
+}
+
+function readStore(): DatabaseStore {
+  ensureDirectories();
   if (!fs.existsSync(STORE_PATH)) {
     fs.writeFileSync(STORE_PATH, JSON.stringify(SEED_DATA, null, 2), 'utf-8');
     return JSON.parse(JSON.stringify(SEED_DATA)) as DatabaseStore;
   }
   try {
     const raw = fs.readFileSync(STORE_PATH, 'utf-8');
-    return JSON.parse(raw) as DatabaseStore;
+    const parsed = JSON.parse(raw) as Partial<DatabaseStore>;
+    const { store, didMigrate } = hydrateStore(parsed);
+    if (didMigrate) {
+      fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), 'utf-8');
+    }
+    return store;
   } catch {
     fs.writeFileSync(STORE_PATH, JSON.stringify(SEED_DATA, null, 2), 'utf-8');
     return JSON.parse(JSON.stringify(SEED_DATA)) as DatabaseStore;
@@ -521,23 +273,80 @@ function readStore(): DatabaseStore {
 }
 
 function writeStore(store: DatabaseStore): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
+  ensureDirectories();
   fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), 'utf-8');
+}
+
+function signAdminToken(username: string): string {
+  const payload = Buffer.from(
+    JSON.stringify({
+      sub: username,
+      iat: Date.now(),
+      exp: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    })
+  ).toString('base64url');
+  const sig = crypto
+    .createHmac('sha256', TOKEN_SECRET)
+    .update(payload)
+    .digest('base64url');
+  return `${payload}.${sig}`;
+}
+
+function verifyAdminToken(token: string | undefined): boolean {
+  if (!token || !token.includes('.')) return false;
+  const [payload, sig] = token.split('.');
+  if (!payload || !sig) return false;
+  const expected = crypto
+    .createHmac('sha256', TOKEN_SECRET)
+    .update(payload)
+    .digest('base64url');
+  if (sig.length !== expected.length) return false;
+  if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+    return false;
+  }
+  try {
+    const decoded = JSON.parse(
+      Buffer.from(payload, 'base64url').toString('utf-8')
+    ) as { exp?: number };
+    return typeof decoded.exp === 'number' && decoded.exp > Date.now();
+  } catch {
+    return false;
+  }
+}
+
+function requireAdmin(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7).trim()
+    : '';
+  if (!verifyAdminToken(token)) {
+    res.status(401).json({
+      success: false,
+      message: 'Phiên đăng nhập quản trị không hợp lệ hoặc đã hết hạn.',
+    });
+    return;
+  }
+  next();
 }
 
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-
-  // Ensure initial store file exists
+  ensureDirectories();
   readStore();
 
-  // RESTful API Routes
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+  // Serve uploaded images and videos reliably
+  app.use('/uploads', express.static(UPLOADS_DIR));
+
+  // Health & Legacy Catalog Routes
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', service: 'SquareSnake Vietnam Full-Stack API' });
   });
@@ -550,7 +359,8 @@ async function startServer() {
   app.get('/api/products', (req, res) => {
     const store = readStore();
     const category = typeof req.query.category === 'string' ? req.query.category : 'all';
-    const search = typeof req.query.search === 'string' ? req.query.search.trim().toLowerCase() : '';
+    const search =
+      typeof req.query.search === 'string' ? req.query.search.trim().toLowerCase() : '';
     const featured = req.query.featured === 'true';
 
     const filtered = store.products.filter((item) => {
@@ -562,8 +372,6 @@ async function startServer() {
           item.code,
           item.tagline,
           item.categoryLabel,
-          item.highlightSpec1Value,
-          item.highlightSpec2Value,
           ...item.specs.map((s) => `${s.label} ${s.value}`),
         ]
           .join(' ')
@@ -576,128 +384,26 @@ async function startServer() {
     res.json({ success: true, count: filtered.length, data: filtered });
   });
 
-  app.get('/api/products/:id', (req, res) => {
-    const store = readStore();
-    const found = store.products.find((p) => p.id === req.params.id);
-    if (!found) {
-      res.status(404).json({ success: false, message: 'Không tìm thấy thiết bị.' });
-      return;
-    }
-    res.json({ success: true, data: found });
-  });
-
-  app.post('/api/products', (req, res) => {
-    const store = readStore();
-    const {
-      name,
-      code,
-      categoryKey,
-      tagline,
-      description,
-      powerOrTravel,
-      controlProtocol,
-      stockCount,
-    } = req.body as {
-      name?: string;
-      code?: string;
-      categoryKey?: 'kinetic' | 'laser' | 'led-matrix';
-      tagline?: string;
-      description?: string;
-      powerOrTravel?: string;
-      controlProtocol?: string;
-      stockCount?: number;
-    };
-
-    if (!name || !code || !categoryKey) {
-      res.status(400).json({
-        success: false,
-        message: 'Vui lòng nhập đầy đủ Tên thiết bị, Mã model và Phân loại.',
-      });
-      return;
-    }
-
-    const categoryMap: Record<
-      'kinetic' | 'laser' | 'led-matrix',
-      {
-        label: string;
-        systemType: 'kinetic-ball' | 'laser-pro' | 'led-matrix';
-        imageUrl: string;
-      }
-    > = {
-      kinetic: {
-        label: 'Hệ thống Kinetic',
-        systemType: 'kinetic-ball',
-        imageUrl: '/src/assets/images/product_kinetic_ball_1794743189815.jpg',
-      },
-      laser: {
-        label: 'Ánh sáng Laser',
-        systemType: 'laser-pro',
-        imageUrl: '/src/assets/images/product_laser_pro_1794743188964.jpg',
-      },
-      'led-matrix': {
-        label: 'LED Matrix',
-        systemType: 'led-matrix',
-        imageUrl: '/src/assets/images/product_led_matrix_1794743188837.jpg',
-      },
-    };
-
-    const meta = categoryMap[categoryKey];
-    const slugId = `${code.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now().toString().slice(-4)}`;
-
-    const newItem: StoreProduct = {
-      id: slugId,
-      code: code.trim().toUpperCase(),
-      name: name.trim(),
-      categoryKey,
-      categoryLabel: meta.label,
-      systemType: meta.systemType,
-      tagline: tagline?.trim() || `${powerOrTravel || 'Cấu hình sân khấu'} · ${controlProtocol || 'Art-Net / DMX512'}`,
-      description:
-        description?.trim() ||
-        'Thiết bị hiệu ứng sân khấu chuyên nghiệp thuộc hệ sinh thái SquareSnake Việt Nam.',
-      stageApplication:
-        'Phù hợp cho concert, lễ hội âm nhạc ngoài trời, sự kiện ra mắt sản phẩm và hội nghị truyền hình.',
-      imageUrl: meta.imageUrl,
-      highlightSpec1Label: categoryKey === 'kinetic' ? 'Hành trình / Công suất' : 'Công suất quang',
-      highlightSpec1Value: powerOrTravel?.trim() || 'Theo tiêu chuẩn dự án',
-      highlightSpec2Label: 'Điều khiển',
-      highlightSpec2Value: controlProtocol?.trim() || 'Art-Net / DMX512',
-      stockCount: Number(stockCount) > 0 ? Number(stockCount) : 20,
-      status: 'available',
-      isFeatured: false,
-      specs: [
-        { label: 'Mã thiết bị', value: code.trim().toUpperCase() },
-        { label: 'Công suất / Hành trình', value: powerOrTravel?.trim() || 'Tiêu chuẩn sân khấu' },
-        { label: 'Chuẩn điều khiển', value: controlProtocol?.trim() || 'Art-Net / DMX512' },
-        { label: 'Điện áp hoạt động', value: 'AC 100–240V, 50/60Hz' },
-      ],
-      riggingNotes: {
-        trussLoad: 'Treo trên khung Truss hộp 400×400mm kèm cáp an toàn',
-        suspensionPoints: '2 × Quick-Lock Clamp công nghiệp',
-        cableDrop: 'Cân chỉnh tự động trước giờ chạy chương trình',
-        controlChain: controlProtocol?.trim() || 'Art-Net / DMX512 Loop',
-      },
-    };
-
-    store.products.push(newItem);
-    writeStore(store);
-
-    res.status(201).json({ success: true, message: 'Đã thêm thiết bị mới thành công.', data: newItem });
-  });
-
   app.get('/api/projects', (_req, res) => {
     const store = readStore();
     res.json({ success: true, count: store.projects.length, data: store.projects });
   });
 
-  app.get('/api/contacts', (_req, res) => {
+  // Public CMS Endpoint consumed by customer-facing storefront
+  app.get('/api/cms/public', (_req, res) => {
     const store = readStore();
-    const sorted = [...store.contacts].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-    res.json({ success: true, count: sorted.length, data: sorted });
+    res.json({
+      success: true,
+      data: {
+        siteSettings: store.siteSettings,
+        models: store.catalogModels,
+        projects: store.cmsProjects,
+        media: store.media,
+      },
+    });
   });
 
+  // Customer Quote Submission (Writes to Customer Inbox)
   app.post('/api/contacts', (req, res) => {
     const store = readStore();
     const {
@@ -719,7 +425,7 @@ async function startServer() {
     if (!customer_name?.trim() || !phone?.trim()) {
       res.status(400).json({
         success: false,
-        message: 'Vui lòng nhập đầy đủ Họ tên và Số điện thoại liên hệ.',
+        message: 'Vui lòng nhập đầy đủ Họ tên và thông tin liên hệ.',
       });
       return;
     }
@@ -728,15 +434,7 @@ async function startServer() {
       ? interested_categories
       : typeof interested_categories === 'string' && interested_categories.trim()
       ? interested_categories.split(',').map((s) => s.trim())
-      : [];
-
-    if (categoriesArr.length === 0) {
-      res.status(400).json({
-        success: false,
-        message: 'Vui lòng chọn ít nhất 1 nhóm thiết bị quan tâm.',
-      });
-      return;
-    }
+      : ['Tư vấn chung'];
 
     const nextId =
       store.contacts.length > 0
@@ -744,7 +442,7 @@ async function startServer() {
         : 1;
     const referenceCode = `SS-BG-${String(1000 + nextId)}`;
 
-    const newContact: StoreContact = {
+    const newContact: CustomerInboxItem = {
       contact_id: nextId,
       reference_code: referenceCode,
       customer_name: customer_name.trim(),
@@ -752,8 +450,10 @@ async function startServer() {
       company_agency: company_agency?.trim() || 'Khách hàng trực tiếp',
       event_date: event_date?.trim() || 'Chưa ấn định',
       interested_categories: categoriesArr,
-      stage_requirements: stage_requirements?.trim() || 'Cần kỹ sư tư vấn khảo sát thực tế',
+      stage_requirements:
+        stage_requirements?.trim() || 'Cần kỹ sư tư vấn khảo sát thực tế',
       status: 'pending',
+      admin_note: '',
       created_at: new Date().toISOString(),
     };
 
@@ -768,7 +468,83 @@ async function startServer() {
     });
   });
 
-  app.patch('/api/contacts/:id/status', (req, res) => {
+  // Admin Authentication
+  app.post('/api/admin/login', (req, res) => {
+    const { username, password } = req.body as {
+      username?: string;
+      password?: string;
+    };
+    if (
+      (username?.trim() || 'admin') === ADMIN_USERNAME &&
+      password === ADMIN_PASSCODE
+    ) {
+      const token = signAdminToken(ADMIN_USERNAME);
+      res.json({
+        success: true,
+        token,
+        user: { username: ADMIN_USERNAME, role: 'Administrator' },
+      });
+      return;
+    }
+    res.status(401).json({
+      success: false,
+      message: 'Tên đăng nhập hoặc mật khẩu quản trị chưa chính xác.',
+    });
+  });
+
+  app.get('/api/admin/verify', requireAdmin, (_req, res) => {
+    res.json({ success: true, user: { username: ADMIN_USERNAME } });
+  });
+
+  // Admin Inbox Endpoints
+  app.get('/api/contacts', requireAdmin, (_req, res) => {
+    const store = readStore();
+    const sorted = [...store.contacts].sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    res.json({ success: true, count: sorted.length, data: sorted });
+  });
+
+  app.get('/api/admin/inbox', requireAdmin, (_req, res) => {
+    const store = readStore();
+    const sorted = [...store.contacts].sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    res.json({ success: true, count: sorted.length, data: sorted });
+  });
+
+  app.patch('/api/admin/inbox/:id', requireAdmin, (req, res) => {
+    const store = readStore();
+    const idNum = Number(req.params.id);
+    const { status, admin_note } = req.body as {
+      status?: 'pending' | 'contacted' | 'quoted';
+      admin_note?: string;
+    };
+
+    const target = store.contacts.find((c) => c.contact_id === idNum);
+    if (!target) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy yêu cầu.' });
+      return;
+    }
+
+    if (status) {
+      if (!['pending', 'contacted', 'quoted'].includes(status)) {
+        res.status(400).json({ success: false, message: 'Trạng thái không hợp lệ.' });
+        return;
+      }
+      target.status = status;
+    }
+    if (typeof admin_note === 'string') {
+      target.admin_note = admin_note;
+    }
+
+    writeStore(store);
+    res.json({ success: true, data: target });
+  });
+
+  app.patch('/api/contacts/:id/status', requireAdmin, (req, res) => {
     const store = readStore();
     const idNum = Number(req.params.id);
     const { status } = req.body as { status?: 'pending' | 'contacted' | 'quoted' };
@@ -780,14 +556,325 @@ async function startServer() {
 
     const target = store.contacts.find((c) => c.contact_id === idNum);
     if (!target) {
-      res.status(404).json({ success: false, message: 'Không tìm thấy yêu cầu báo giá.' });
+      res.status(404).json({ success: false, message: 'Không tìm thấy yêu cầu.' });
       return;
     }
 
     target.status = status;
     writeStore(store);
+    res.json({ success: true, data: target });
+  });
 
-    res.json({ success: true, message: 'Đã cập nhật trạng thái xử lý.', data: target });
+  app.delete('/api/admin/inbox/:id', requireAdmin, (req, res) => {
+    const store = readStore();
+    const idNum = Number(req.params.id);
+    const before = store.contacts.length;
+    store.contacts = store.contacts.filter((c) => c.contact_id !== idNum);
+    if (store.contacts.length === before) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy yêu cầu.' });
+      return;
+    }
+    writeStore(store);
+    res.json({ success: true });
+  });
+
+  // Admin Site Settings (Hero, About, Footer, Contact Info)
+  app.put('/api/admin/site-settings', requireAdmin, (req, res) => {
+    const store = readStore();
+    const patch = req.body as Partial<SiteSettings>;
+    store.siteSettings = {
+      ...store.siteSettings,
+      ...patch,
+    };
+    writeStore(store);
+    res.json({ success: true, data: store.siteSettings });
+  });
+
+  // Admin Product Models CRUD
+  app.post('/api/admin/models', requireAdmin, (req, res) => {
+    const store = readStore();
+    const body = req.body as Partial<FigmaProductModel>;
+    if (!body.fullName?.trim() || !body.collection) {
+      res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập Tên sản phẩm và Chọn dòng thiết bị.',
+      });
+      return;
+    }
+
+    const collectionLabels: Record<'led-matrix' | 'laser' | 'kinetic', string> = {
+      'led-matrix': 'LED Matrix',
+      laser: 'Laser',
+      kinetic: 'Kinetic',
+    };
+
+    const slugId =
+      body.id?.trim() ||
+      `${body.collection}-${body.fullName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')}-${Date.now().toString().slice(-4)}`;
+
+    const created: FigmaProductModel = {
+      id: slugId,
+      collection: body.collection,
+      collectionName: collectionLabels[body.collection],
+      kicker:
+        body.kicker?.trim() ||
+        `${collectionLabels[body.collection].toUpperCase()} / ${(
+          body.shortLabel || body.fullName
+        ).toUpperCase()}`,
+      shortLabel: body.shortLabel?.trim() || body.fullName.trim(),
+      titleLine1: body.titleLine1?.trim() || body.shortLabel?.trim() || body.fullName.trim(),
+      titleLine2: body.titleLine2?.trim() || collectionLabels[body.collection],
+      fullName: body.fullName.trim(),
+      cardTag: body.cardTag?.trim() || `${collectionLabels[body.collection]} / ${body.fullName.trim()}`,
+      heroSummary:
+        body.heroSummary?.trim() ||
+        `Cấu hình ${body.fullName.trim()} chuyên dụng cho sân khấu và sự kiện.`,
+      imageUrl: body.imageUrl?.trim() || '/assets/squaresnake/hero-concert.jpg',
+      videoUrl: body.videoUrl?.trim() || '',
+      galleryImages: Array.isArray(body.galleryImages) ? body.galleryImages : [],
+      specs:
+        Array.isArray(body.specs) && body.specs.length > 0
+          ? body.specs
+          : [
+              { label: 'Model', value: body.fullName.trim() },
+              { label: 'Control protocol', value: 'DMX512 / Art-Net' },
+            ],
+      specsFootnote:
+        body.specsFootnote?.trim() ||
+        'Thông số có thể tùy chỉnh theo yêu cầu dự án thực tế.',
+      applicationsLead:
+        body.applicationsLead?.trim() || 'Hiệu ứng sân khấu chuyên nghiệp.',
+      applicationsBody:
+        body.applicationsBody?.trim() ||
+        'Phù hợp cho concert, triển lãm và các sự kiện ngoài trời hoặc trong nhà.',
+      applicationsFootnote:
+        body.applicationsFootnote?.trim() ||
+        'Tư vấn cấu hình chi tiết bởi đội ngũ kỹ sư SquareSnake FX.',
+    };
+
+    store.catalogModels.push(created);
+    writeStore(store);
+    res.status(201).json({ success: true, data: created });
+  });
+
+  app.put('/api/admin/models/:id', requireAdmin, (req, res) => {
+    const store = readStore();
+    const idx = store.catalogModels.findIndex((m) => m.id === req.params.id);
+    if (idx === -1) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm.' });
+      return;
+    }
+    const patch = req.body as Partial<FigmaProductModel>;
+    const current = store.catalogModels[idx];
+    const collectionLabels: Record<'led-matrix' | 'laser' | 'kinetic', string> = {
+      'led-matrix': 'LED Matrix',
+      laser: 'Laser',
+      kinetic: 'Kinetic',
+    };
+    const nextCollection = patch.collection || current.collection;
+    store.catalogModels[idx] = {
+      ...current,
+      ...patch,
+      id: current.id,
+      collection: nextCollection,
+      collectionName: collectionLabels[nextCollection],
+    };
+    writeStore(store);
+    res.json({ success: true, data: store.catalogModels[idx] });
+  });
+
+  app.delete('/api/admin/models/:id', requireAdmin, (req, res) => {
+    const store = readStore();
+    const before = store.catalogModels.length;
+    store.catalogModels = store.catalogModels.filter((m) => m.id !== req.params.id);
+    if (store.catalogModels.length === before) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm.' });
+      return;
+    }
+    writeStore(store);
+    res.json({ success: true });
+  });
+
+  // Admin Case Studies / Projects CRUD
+  app.post('/api/admin/projects', requireAdmin, (req, res) => {
+    const store = readStore();
+    const body = req.body as Partial<CmsProjectCase>;
+    if (!body.title?.trim()) {
+      res.status(400).json({ success: false, message: 'Vui lòng nhập Tên dự án.' });
+      return;
+    }
+    const created: CmsProjectCase = {
+      id: `case-${Date.now()}`,
+      num:
+        body.num?.trim() ||
+        `0${store.cmsProjects.length + 1} / STAGE PROJECT`,
+      title: body.title.trim(),
+      detail: body.detail?.trim() || 'LED Matrix · Laser · Kinetic',
+      summary:
+        body.summary?.trim() ||
+        'Dự án trình diễn ánh sáng và hiệu ứng sân khấu do SquareSnake FX triển khai.',
+      imageUrl: body.imageUrl?.trim() || '/assets/squaresnake/hero-concert.jpg',
+      videoUrl: body.videoUrl?.trim() || '',
+      slug: body.slug || 'kinetic',
+    };
+    store.cmsProjects.unshift(created);
+    writeStore(store);
+    res.status(201).json({ success: true, data: created });
+  });
+
+  app.put('/api/admin/projects/:id', requireAdmin, (req, res) => {
+    const store = readStore();
+    const idx = store.cmsProjects.findIndex((p) => p.id === req.params.id);
+    if (idx === -1) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy dự án.' });
+      return;
+    }
+    store.cmsProjects[idx] = {
+      ...store.cmsProjects[idx],
+      ...(req.body as Partial<CmsProjectCase>),
+      id: store.cmsProjects[idx].id,
+    };
+    writeStore(store);
+    res.json({ success: true, data: store.cmsProjects[idx] });
+  });
+
+  app.delete('/api/admin/projects/:id', requireAdmin, (req, res) => {
+    const store = readStore();
+    const before = store.cmsProjects.length;
+    store.cmsProjects = store.cmsProjects.filter((p) => p.id !== req.params.id);
+    if (store.cmsProjects.length === before) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy dự án.' });
+      return;
+    }
+    writeStore(store);
+    res.json({ success: true });
+  });
+
+  // Admin Direct File Upload (Images & Videos) + External Media Link
+  app.post('/api/admin/upload', requireAdmin, (req, res) => {
+    const { filename, mimeType, dataBase64, title, category } = req.body as {
+      filename?: string;
+      mimeType?: string;
+      dataBase64?: string;
+      title?: string;
+      category?: string;
+    };
+
+    if (!filename || !mimeType || !dataBase64) {
+      res.status(400).json({
+        success: false,
+        message: 'Thiếu dữ liệu tệp tin tải lên.',
+      });
+      return;
+    }
+
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
+    const isImage = allowedImageTypes.includes(mimeType);
+    const isVideo = allowedVideoTypes.includes(mimeType);
+
+    if (!isImage && !isVideo) {
+      res.status(400).json({
+        success: false,
+        message: 'Chỉ hỗ trợ ảnh (JPG, PNG, WebP, GIF) hoặc video (MP4, WebM, MOV).',
+      });
+      return;
+    }
+
+    try {
+      const cleanBase64 = dataBase64.includes(',')
+        ? dataBase64.split(',')[1]
+        : dataBase64;
+      const buffer = Buffer.from(cleanBase64, 'base64');
+      if (buffer.length > 35 * 1024 * 1024) {
+        res.status(400).json({
+          success: false,
+          message: 'Dung lượng tệp vượt quá giới hạn 35MB.',
+        });
+        return;
+      }
+
+      const ext = path.extname(filename).toLowerCase() || (isImage ? '.jpg' : '.mp4');
+      const base = path
+        .basename(filename, ext)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .slice(0, 40) || 'media';
+      const storedName = `${Date.now()}-${base}${ext}`;
+      const targetPath = path.join(UPLOADS_DIR, storedName);
+      fs.writeFileSync(targetPath, buffer);
+
+      const url = `/uploads/${storedName}`;
+      const store = readStore();
+      const mediaItem: CmsMediaItem = {
+        id: `media-${Date.now()}`,
+        title: title?.trim() || filename,
+        type: isImage ? 'image' : 'video',
+        url,
+        category: category?.trim() || (isImage ? 'Hình ảnh sân khấu' : 'Video trình diễn'),
+        createdAt: new Date().toISOString(),
+      };
+
+      store.media.unshift(mediaItem);
+      writeStore(store);
+
+      res.status(201).json({ success: true, url, data: mediaItem });
+    } catch {
+      res.status(500).json({
+        success: false,
+        message: 'Không thể lưu tệp tin lên máy chủ.',
+      });
+    }
+  });
+
+  app.post('/api/admin/media', requireAdmin, (req, res) => {
+    const { title, type, url, category } = req.body as Partial<CmsMediaItem>;
+    if (!url?.trim() || !title?.trim()) {
+      res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập Tiêu đề và Đường dẫn ảnh/video.',
+      });
+      return;
+    }
+    const store = readStore();
+    const item: CmsMediaItem = {
+      id: `media-${Date.now()}`,
+      title: title.trim(),
+      type: type === 'video' ? 'video' : 'image',
+      url: url.trim(),
+      category: category?.trim() || 'Thư viện media',
+      createdAt: new Date().toISOString(),
+    };
+    store.media.unshift(item);
+    writeStore(store);
+    res.status(201).json({ success: true, data: item });
+  });
+
+  app.delete('/api/admin/media/:id', requireAdmin, (req, res) => {
+    const store = readStore();
+    const target = store.media.find((m) => m.id === req.params.id);
+    if (!target) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy tệp media.' });
+      return;
+    }
+    store.media = store.media.filter((m) => m.id !== req.params.id);
+    writeStore(store);
+
+    if (target.url.startsWith('/uploads/')) {
+      const filePath = path.join(UPLOADS_DIR, path.basename(target.url));
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch {
+          // ignore cleanup failure
+        }
+      }
+    }
+
+    res.json({ success: true });
   });
 
   // Vite Middleware in Development / Static Dist in Production
@@ -806,7 +893,9 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[SquareSnake Full-Stack] Server đang chạy tại http://0.0.0.0:${PORT}`);
+    console.log(
+      `[SquareSnake Full-Stack] Server đang chạy tại http://0.0.0.0:${PORT}`
+    );
   });
 }
 

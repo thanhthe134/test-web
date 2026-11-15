@@ -1,24 +1,12 @@
-export type CollectionSlug = 'led-matrix' | 'laser' | 'kinetic';
+import {
+  CmsMediaItem,
+  CmsProjectCase,
+  CollectionSlug,
+  FigmaProductModel,
+  SiteSettings,
+} from '../types/cms';
 
-export interface FigmaProductModel {
-  id: string;
-  collection: CollectionSlug;
-  collectionName: string;
-  kicker: string;
-  shortLabel: string;
-  titleLine1: string;
-  titleLine2: string;
-  fullName: string;
-  cardTag: string;
-  cardSubtitle?: string;
-  heroSummary: string;
-  imageUrl: string;
-  specs: { label: string; value: string }[];
-  specsFootnote: string;
-  applicationsLead: string;
-  applicationsBody: string;
-  applicationsFootnote: string;
-}
+export type { CollectionSlug, FigmaProductModel } from '../types/cms';
 
 export interface CollectionPageData {
   slug: CollectionSlug;
@@ -164,6 +152,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: 'Discover the 20-pixel format for your next design.',
     heroSummary: 'Build your pixel lighting concept around the 20-pixel LED Matrix variant.',
     imageUrl: FIGMA_ASSETS.ledMatrix,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Variant', value: '20-pixel' },
       { label: 'Dimensions / weight', value: 'To be confirmed' },
@@ -189,6 +179,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: 'Explore the 60-pixel format and creative possibilities.',
     heroSummary: 'Build your pixel lighting concept around the 60-pixel LED Matrix variant.',
     imageUrl: FIGMA_ASSETS.ledMatrix,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Variant', value: '60-pixel' },
       { label: 'Dimensions / weight', value: 'To be confirmed' },
@@ -216,6 +208,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: `Laser system / ${power}`,
     heroSummary: `Explore the ${power} laser option for your next production. Ask for a verified system datasheet.`,
     imageUrl: FIGMA_ASSETS.laser,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Power option', value: power },
       { label: 'Wavelengths / colour', value: 'To be confirmed' },
@@ -244,6 +238,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: 'Kinetic / Balls',
     heroSummary: 'Explore balls as part of a suspended kinetic installation designed around your space.',
     imageUrl: FIGMA_ASSETS.kineticBalls,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Form', value: 'Balls' },
       { label: 'Dimensions / weight', value: 'To be confirmed' },
@@ -269,6 +265,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: 'Kinetic / Rings',
     heroSummary: 'Explore rings as part of a suspended kinetic installation designed around your space.',
     imageUrl: FIGMA_ASSETS.kineticRings,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Form', value: 'Rings' },
       { label: 'Dimensions / weight', value: 'To be confirmed' },
@@ -294,6 +292,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: 'Kinetic / Lanterns',
     heroSummary: 'Explore lanterns as part of a suspended kinetic installation designed around your space.',
     imageUrl: FIGMA_ASSETS.kineticLanterns,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Form', value: 'Lanterns' },
       { label: 'Dimensions / weight', value: 'To be confirmed' },
@@ -319,6 +319,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: 'Kinetic / Milk-drop',
     heroSummary: 'Explore milk-drop as part of a suspended kinetic installation designed around your space.',
     imageUrl: FIGMA_ASSETS.kineticMilkDrop,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Form', value: 'Milk-drop' },
       { label: 'Dimensions / weight', value: 'To be confirmed' },
@@ -344,6 +346,8 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     cardTag: 'Kinetic / Metal spheres',
     heroSummary: 'Explore metal spheres as part of a suspended kinetic installation designed around your space.',
     imageUrl: FIGMA_ASSETS.kineticMetalSpheres,
+    videoUrl: '',
+    galleryImages: [],
     specs: [
       { label: 'Form', value: 'Metal spheres' },
       { label: 'Dimensions / weight', value: 'To be confirmed' },
@@ -356,5 +360,108 @@ export const PRODUCT_MODELS: FigmaProductModel[] = [
     applicationsLead: 'Sculptural forms. Choreographed movement.',
     applicationsBody: 'Imagine a moving installation built around metal spheres. Discuss layout, suspension and the visual rhythm of your space.',
     applicationsFootnote: 'Illustrative concept. Verified show references and model-specific media to be supplied.',
+  },
+];
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  companyName: 'CÔNG TY TNHH SQUARESNAKE FX VIỆT NAM',
+  heroKicker: 'LIGHT. MOTION. IMPACT.',
+  heroTitleLine1: 'Built for the',
+  heroTitleLine2: 'unforgettable.',
+  heroDescription:
+    'LED Matrix, laser and kinetic systems.\nExtraordinary possibilities for your next show.',
+  heroImageUrl: FIGMA_ASSETS.heroConcert,
+  heroVideoUrl: '',
+  aboutKicker: 'VỀ SQUARESNAKE FX VIỆT NAM',
+  aboutTitleLine1: 'Kỹ thuật chính xác.',
+  aboutTitleLine2: 'Hiệu ứng đỉnh cao.',
+  aboutDescription:
+    'Công ty TNHH SquareSnake FX Việt Nam chuyên cung cấp, cho thuê và trực tiếp lập trình vận hành các hệ thống LED Matrix, Laser công suất lớn và cơ khí Kinetic cho concert, triển lãm và sự kiện quy mô lớn tại Hà Nội, TP.HCM và toàn quốc.',
+  aboutImageUrl: FIGMA_ASSETS.heroConcert,
+  footerDescription:
+    'Sự cam kết không ngừng nghỉ của chúng tôi trong việc thúc đẩy công nghệ ánh sáng sân khấu Kinetic, Laser và LED Matrix đã mang lại danh tiếng vững chắc trong ngành tổ chức sự kiện.',
+  phone: '+84 909 886 247',
+  zalo: '+84 909 886 247',
+  email: 'baogia@squaresnake.vn',
+  address:
+    'Lô B4-12 Khu công nghiệp Thạch Bàn, Quận Long Biên, Hà Nội & 88 Nguyễn Văn Linh, Quận 7, TP.HCM.',
+};
+
+export const DEFAULT_PROJECTS: CmsProjectCase[] = [
+  {
+    id: 'case-song-dem',
+    num: '01 / MUSIC FESTIVAL',
+    title: 'Đại Nhạc Hội Sóng Đêm — SVĐ Mỹ Đình',
+    detail: 'Laser 60W & 40W · Kinetic Balls · Timecode GrandMA3',
+    summary:
+      'Triển khai đồng bộ hệ thống tia Laser công suất lớn ngoài trời kết hợp ma trận Kinetic trên giàn truss chính cho 35.000 khán giả.',
+    imageUrl: FIGMA_ASSETS.laser,
+    videoUrl: '',
+    slug: 'laser',
+  },
+  {
+    id: 'case-secc-auto',
+    num: '02 / AUTO EXHIBITION',
+    title: 'Triển Lãm Ô Tô Tương Lai — SECC Quận 7',
+    detail: 'Kinetic Rings · Kinetic Metal spheres',
+    summary:
+      'Hệ thống vòng Kinetic đa trục chuyển động mượt mà phía trên khu trưng bày xe concept suốt 10 giờ/ngày.',
+    imageUrl: FIGMA_ASSETS.kineticRings,
+    videoUrl: '',
+    slug: 'kinetic',
+  },
+  {
+    id: 'case-countdown-hcm',
+    num: '03 / LIVE STAGE & TV',
+    title: 'Countdown Gala — Phố Đi Bộ Nguyễn Huệ',
+    detail: '60-pixel LED Matrix · Laser 30W',
+    summary:
+      'Tổ hợp bức tường LED Matrix hiệu ứng sóng pixel 3D không nhấp nháy trên camera truyền hình trực tiếp.',
+    imageUrl: FIGMA_ASSETS.ledMatrix,
+    videoUrl: '',
+    slug: 'led-matrix',
+  },
+];
+
+export const DEFAULT_MEDIA_LIBRARY: CmsMediaItem[] = [
+  {
+    id: 'media-hero-concert',
+    title: 'Concert Stage Concept',
+    type: 'image',
+    url: FIGMA_ASSETS.heroConcert,
+    category: 'Sân khấu chính',
+    createdAt: '2026-11-10T08:00:00.000Z',
+  },
+  {
+    id: 'media-led-matrix',
+    title: 'LED Matrix Wave Array',
+    type: 'image',
+    url: FIGMA_ASSETS.ledMatrix,
+    category: 'LED Matrix',
+    createdAt: '2026-11-10T08:05:00.000Z',
+  },
+  {
+    id: 'media-laser-beams',
+    title: 'Laser Fan Array',
+    type: 'image',
+    url: FIGMA_ASSETS.laser,
+    category: 'Laser',
+    createdAt: '2026-11-10T08:10:00.000Z',
+  },
+  {
+    id: 'media-kinetic-balls',
+    title: 'Kinetic Balls Array',
+    type: 'image',
+    url: FIGMA_ASSETS.kineticBalls,
+    category: 'Kinetic',
+    createdAt: '2026-11-10T08:15:00.000Z',
+  },
+  {
+    id: 'media-kinetic-rings',
+    title: 'Kinetic Double Axis Rings',
+    type: 'image',
+    url: FIGMA_ASSETS.kineticRings,
+    category: 'Kinetic',
+    createdAt: '2026-11-10T08:20:00.000Z',
   },
 ];

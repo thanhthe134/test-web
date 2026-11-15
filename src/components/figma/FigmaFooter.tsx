@@ -1,12 +1,14 @@
 import React from 'react';
 import { Facebook, Instagram, Mail, Youtube } from 'lucide-react';
-import { CollectionSlug } from '../../data/figmaCatalog';
+import { CollectionSlug, DEFAULT_SITE_SETTINGS } from '../../data/figmaCatalog';
+import { SiteSettings } from '../../types/cms';
 import { FigmaRoute } from './FigmaHeader';
 
 interface FigmaFooterProps {
   route: FigmaRoute;
   detailCollectionSlug?: CollectionSlug;
   detailCollectionName?: string;
+  siteSettings?: SiteSettings;
   onNavigate: (next: FigmaRoute) => void;
 }
 
@@ -27,25 +29,25 @@ const QUICK_LINKS: { label: string; route: FigmaRoute }[] = [
   { label: 'Trường hợp dự án', route: { page: 'projects' } },
   { label: 'Trung tâm thông tin', route: { page: 'info' } },
   { label: 'Liên hệ với chúng tôi', route: { page: 'quote' } },
+  { label: 'Quản trị CMS (Admin)', route: { page: 'admin' } },
 ];
 
-export const FigmaFooter: React.FC<FigmaFooterProps> = ({ onNavigate }) => {
+export const FigmaFooter: React.FC<FigmaFooterProps> = ({
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  onNavigate,
+}) => {
   return (
     <footer className="bg-gradient-to-br from-[#231F1D] via-[#1B1B1E] to-[#141417] border-t border-[#242429] text-white">
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 pt-16 pb-10">
-        {/* 4-Column Footer Grid matching user screenshot */}
+        {/* 4-Column Footer Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 pb-14">
           {/* Column 1: Company Name & Mission */}
           <div className="lg:col-span-3 space-y-4">
             <h2 className="font-display text-lg font-bold tracking-wide text-[#E5C148] uppercase leading-snug">
-              CÔNG TY TNHH
-              <br />
-              SQUARESNAKE FX VIỆT NAM
+              {siteSettings.companyName}
             </h2>
             <p className="text-sm text-[#D4D4D8] leading-relaxed">
-              Sự cam kết không ngừng nghỉ của chúng tôi trong việc thúc đẩy công nghệ ánh sáng
-              sân khấu Kinetic, Laser và LED Matrix đã mang lại danh tiếng vững chắc trong ngành
-              tổ chức sự kiện.
+              {siteSettings.footerDescription}
             </p>
           </div>
 
@@ -95,23 +97,22 @@ export const FigmaFooter: React.FC<FigmaFooterProps> = ({ onNavigate }) => {
               LIÊN HỆ VỚI CHÚNG TÔI
             </h3>
             <p className="text-sm text-[#D4D4D8] tabular-nums">
-              Điện thoại: +84 909 886 247
+              Điện thoại: {siteSettings.phone}
             </p>
             <p className="text-sm text-[#D4D4D8] tabular-nums">
-              Zalo / WhatsApp: +84 909 886 247
+              Zalo / WhatsApp: {siteSettings.zalo}
             </p>
             <p className="text-sm text-[#D4D4D8]">
               E-mail:{' '}
               <a
-                href="mailto:baogia@squaresnake.vn"
+                href={`mailto:${siteSettings.email}`}
                 className="hover:text-[#E5C148] transition-colors"
               >
-                baogia@squaresnake.vn
+                {siteSettings.email}
               </a>
             </p>
             <p className="text-sm text-[#D4D4D8] leading-relaxed">
-              Địa chỉ: Lô B4-12 Khu công nghiệp Thạch Bàn, Quận Long Biên, Hà Nội &amp; 88 Nguyễn
-              Văn Linh, Quận 7, TP.HCM.
+              Địa chỉ: {siteSettings.address}
             </p>
 
             <div className="pt-3">

@@ -9,7 +9,8 @@ export type FigmaRoute =
   | { page: 'detail'; modelId: string }
   | { page: 'projects' }
   | { page: 'info' }
-  | { page: 'quote'; prefillModel?: string };
+  | { page: 'quote'; prefillModel?: string }
+  | { page: 'admin' };
 
 interface FigmaHeaderProps {
   route: FigmaRoute;

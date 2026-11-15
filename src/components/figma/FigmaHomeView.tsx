@@ -1,10 +1,13 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { FIGMA_ASSETS } from '../../data/figmaCatalog';
+import { DEFAULT_SITE_SETTINGS, FIGMA_ASSETS } from '../../data/figmaCatalog';
+import { SiteSettings } from '../../types/cms';
 import { ResilientImage } from '../ResilientImage';
 import { FigmaRoute } from './FigmaHeader';
+import { getYouTubeEmbedUrl } from './MediaRenderer';
 
 interface FigmaHomeViewProps {
+  siteSettings?: SiteSettings;
   onNavigate: (next: FigmaRoute) => void;
 }
 
@@ -53,17 +56,35 @@ const WORKFLOW_STEPS = [
   },
 ];
 
-export const FigmaHomeView: React.FC<FigmaHomeViewProps> = ({ onNavigate }) => {
+export const FigmaHomeView: React.FC<FigmaHomeViewProps> = ({
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  onNavigate,
+}) => {
+  const heroVideo = siteSettings.heroVideoUrl?.trim() || '';
+  const hasDirectHeroVideo = Boolean(heroVideo) && !getYouTubeEmbedUrl(heroVideo);
+
   return (
     <div>
       {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden border-b border-[#1E1E24] bg-[#0B0B0D]">
         <div className="absolute inset-0">
-          <ResilientImage
-            src={FIGMA_ASSETS.heroConcert}
-            alt="SquareSnake FX live concert stage lighting concept"
-            className="w-full h-full object-cover object-center opacity-75"
-          />
+          {hasDirectHeroVideo ? (
+            <video
+              src={heroVideo}
+              poster={siteSettings.heroImageUrl || FIGMA_ASSETS.heroConcert}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover object-center opacity-75"
+            />
+          ) : (
+            <ResilientImage
+              src={siteSettings.heroImageUrl || FIGMA_ASSETS.heroConcert}
+              alt="SquareSnake FX live concert stage lighting concept"
+              className="w-full h-full object-cover object-center opacity-75"
+            />
+          )}
           {/* Left-to-right obsidian readability scrim */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0D] via-[#0B0B0D]/80 to-[#0B0B0D]/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0D] via-transparent to-[#0B0B0D]/55" />
@@ -72,22 +93,20 @@ export const FigmaHomeView: React.FC<FigmaHomeViewProps> = ({ onNavigate }) => {
         <div className="relative max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 pt-20 pb-10 lg:pt-28 lg:pb-12">
           <div className="max-w-2xl">
             <p className="text-[11px] font-semibold tracking-[0.14em] text-[#E5C148] uppercase mb-5">
-              LIGHT. MOTION. IMPACT.
+              {siteSettings.heroKicker}
             </p>
 
             <h1
               className="font-display font-bold text-white tracking-[-0.025em] leading-[1.03] mb-6"
               style={{ fontSize: 'clamp(3rem, 5.5vw, 4.75rem)' }}
             >
-              Built for the
+              {siteSettings.heroTitleLine1}
               <br />
-              unforgettable.
+              {siteSettings.heroTitleLine2}
             </h1>
 
-            <p className="text-base sm:text-lg text-[#B4B4BD] leading-relaxed max-w-md mb-9">
-              LED Matrix, laser and kinetic systems.
-              <br />
-              Extraordinary possibilities for your next show.
+            <p className="text-base sm:text-lg text-[#B4B4BD] leading-relaxed max-w-md mb-9 whitespace-pre-line">
+              {siteSettings.heroDescription}
             </p>
 
             <div className="flex flex-wrap items-center gap-3.5">

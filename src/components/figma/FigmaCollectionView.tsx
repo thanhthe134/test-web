@@ -1,20 +1,30 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { COLLECTIONS, PRODUCT_MODELS, CollectionSlug } from '../../data/figmaCatalog';
+import {
+  COLLECTIONS,
+  CollectionSlug,
+  FigmaProductModel,
+  PRODUCT_MODELS,
+} from '../../data/figmaCatalog';
 import { ResilientImage } from '../ResilientImage';
 import { FigmaRoute } from './FigmaHeader';
 
 interface FigmaCollectionViewProps {
   slug: CollectionSlug;
+  allModels?: FigmaProductModel[];
   onNavigate: (next: FigmaRoute) => void;
 }
 
-export const FigmaCollectionView: React.FC<FigmaCollectionViewProps> = ({ slug, onNavigate }) => {
+export const FigmaCollectionView: React.FC<FigmaCollectionViewProps> = ({
+  slug,
+  allModels = PRODUCT_MODELS,
+  onNavigate,
+}) => {
   const collection = COLLECTIONS[slug];
-  const models = PRODUCT_MODELS.filter((m) => m.collection === slug);
+  const models = allModels.filter((m) => m.collection === slug);
 
   const gridColsClass =
-    slug === 'led-matrix'
+    slug === 'led-matrix' && models.length <= 2
       ? 'grid-cols-1 md:grid-cols-2'
       : slug === 'laser'
       ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'

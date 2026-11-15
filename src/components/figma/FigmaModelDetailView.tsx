@@ -3,17 +3,20 @@ import { ArrowUpRight } from 'lucide-react';
 import { FigmaProductModel, PRODUCT_MODELS } from '../../data/figmaCatalog';
 import { ResilientImage } from '../ResilientImage';
 import { FigmaRoute } from './FigmaHeader';
+import { MediaStageView } from './MediaRenderer';
 
 interface FigmaModelDetailViewProps {
   model: FigmaProductModel;
+  allModels?: FigmaProductModel[];
   onNavigate: (next: FigmaRoute) => void;
 }
 
 export const FigmaModelDetailView: React.FC<FigmaModelDetailViewProps> = ({
   model,
+  allModels = PRODUCT_MODELS,
   onNavigate,
 }) => {
-  const siblings = PRODUCT_MODELS.filter(
+  const siblings = allModels.filter(
     (m) => m.collection === model.collection && m.id !== model.id
   );
 
@@ -134,13 +137,14 @@ export const FigmaModelDetailView: React.FC<FigmaModelDetailViewProps> = ({
         </div>
       </section>
 
-      {/* Show Applications */}
+      {/* Show Applications (supports Video when uploaded/linked by Admin) */}
       <section className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <div className="lg:col-span-6">
             <div className="aspect-[16/10] w-full overflow-hidden bg-[#141417] border border-[#242429]">
-              <ResilientImage
-                src={model.imageUrl}
+              <MediaStageView
+                imageUrl={model.imageUrl}
+                videoUrl={model.videoUrl}
                 alt={`${model.fullName} show application`}
                 className="w-full h-full object-cover"
               />
@@ -163,6 +167,29 @@ export const FigmaModelDetailView: React.FC<FigmaModelDetailViewProps> = ({
             </p>
           </div>
         </div>
+
+        {/* Optional Extra Gallery Images added via Admin */}
+        {model.galleryImages && model.galleryImages.length > 0 && (
+          <div className="mt-14 pt-10 border-t border-[#1E1E24]">
+            <p className="text-[11px] font-semibold tracking-[0.12em] text-[#E5C148] uppercase mb-5">
+              GALLERY &amp; STAGE REFERENCES
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {model.galleryImages.map((imgUrl, idx) => (
+                <div
+                  key={`${imgUrl}-${idx}`}
+                  className="aspect-[16/10] bg-[#141417] border border-[#242429] overflow-hidden"
+                >
+                  <ResilientImage
+                    src={imgUrl}
+                    alt={`${model.fullName} reference ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Gold CTA Banner */}
         <div className="mt-20 bg-[#E5C148] p-8 sm:p-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8">

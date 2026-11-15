@@ -1,14 +1,25 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { FIGMA_ASSETS } from '../../data/figmaCatalog';
+import {
+  DEFAULT_MEDIA_LIBRARY,
+  DEFAULT_PROJECTS,
+  DEFAULT_SITE_SETTINGS,
+  FIGMA_ASSETS,
+} from '../../data/figmaCatalog';
+import { CmsMediaItem, CmsProjectCase, SiteSettings } from '../../types/cms';
 import { ResilientImage } from '../ResilientImage';
 import { FigmaRoute } from './FigmaHeader';
+import { MediaStageView } from './MediaRenderer';
 
-interface ExtraViewProps {
+interface AboutViewProps {
+  siteSettings?: SiteSettings;
   onNavigate: (next: FigmaRoute) => void;
 }
 
-export const FigmaAboutView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
+export const FigmaAboutView: React.FC<AboutViewProps> = ({
+  siteSettings = DEFAULT_SITE_SETTINGS,
+  onNavigate,
+}) => {
   return (
     <div>
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 pt-8 pb-4">
@@ -29,20 +40,18 @@ export const FigmaAboutView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-6">
             <p className="text-[11px] font-semibold tracking-[0.12em] text-[#E5C148] uppercase mb-4">
-              VỀ SQUARESNAKE FX VIỆT NAM
+              {siteSettings.aboutKicker}
             </p>
             <h1
               className="font-display font-semibold text-white tracking-[-0.025em] leading-[1.06] mb-6"
               style={{ fontSize: 'clamp(2.5rem, 4.2vw, 3.75rem)' }}
             >
-              Kỹ thuật chính xác.
+              {siteSettings.aboutTitleLine1}
               <br />
-              Hiệu ứng đỉnh cao.
+              {siteSettings.aboutTitleLine2}
             </h1>
-            <p className="text-sm sm:text-base text-[#9E9EA7] leading-relaxed mb-8 max-w-xl">
-              Công ty TNHH SquareSnake FX Việt Nam chuyên cung cấp, cho thuê và trực tiếp lập
-              trình vận hành các hệ thống LED Matrix, Laser công suất lớn và cơ khí Kinetic cho
-              concert, triển lãm và sự kiện quy mô lớn tại Hà Nội, TP.HCM và toàn quốc.
+            <p className="text-sm sm:text-base text-[#9E9EA7] leading-relaxed mb-8 max-w-xl whitespace-pre-line">
+              {siteSettings.aboutDescription}
             </p>
             <button
               type="button"
@@ -57,7 +66,7 @@ export const FigmaAboutView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
           <div className="lg:col-span-6">
             <div className="aspect-[16/10] w-full overflow-hidden bg-[#141417] border border-[#242429]">
               <ResilientImage
-                src={FIGMA_ASSETS.heroConcert}
+                src={siteSettings.aboutImageUrl || FIGMA_ASSETS.heroConcert}
                 alt="SquareSnake FX Việt Nam"
                 className="w-full h-full object-cover"
               />
@@ -85,37 +94,15 @@ export const FigmaAboutView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
   );
 };
 
-export const FigmaProjectsView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
-  const cases = [
-    {
-      num: '01 / MUSIC FESTIVAL',
-      title: 'Đại Nhạc Hội Sóng Đêm — SVĐ Mỹ Đình',
-      detail: 'Laser 60W & 40W · Kinetic Balls · Timecode GrandMA3',
-      summary:
-        'Triển khai đồng bộ hệ thống tia Laser công suất lớn ngoài trời kết hợp ma trận Kinetic trên giàn truss chính cho 35.000 khán giả.',
-      image: FIGMA_ASSETS.laser,
-      route: { page: 'collection' as const, slug: 'laser' as const },
-    },
-    {
-      num: '02 / AUTO EXHIBITION',
-      title: 'Triển Lãm Ô Tô Tương Lai — SECC Quận 7',
-      detail: 'Kinetic Rings · Kinetic Metal spheres',
-      summary:
-        'Hệ thống vòng Kinetic đa trục chuyển động mượt mà phía trên khu trưng bày xe concept suốt 10 giờ/ngày.',
-      image: FIGMA_ASSETS.kineticRings,
-      route: { page: 'collection' as const, slug: 'kinetic' as const },
-    },
-    {
-      num: '03 / LIVE STAGE & TV',
-      title: 'Countdown Gala — Phố Đi Bộ Nguyễn Huệ',
-      detail: '60-pixel LED Matrix · Laser 30W',
-      summary:
-        'Tổ hợp bức tường LED Matrix hiệu ứng sóng pixel 3D không nhấp nháy trên camera truyền hình trực tiếp.',
-      image: FIGMA_ASSETS.ledMatrix,
-      route: { page: 'collection' as const, slug: 'led-matrix' as const },
-    },
-  ];
+interface ProjectsViewProps {
+  projects?: CmsProjectCase[];
+  onNavigate: (next: FigmaRoute) => void;
+}
 
+export const FigmaProjectsView: React.FC<ProjectsViewProps> = ({
+  projects = DEFAULT_PROJECTS,
+  onNavigate,
+}) => {
   return (
     <div>
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 pt-8 pb-4">
@@ -141,15 +128,16 @@ export const FigmaProjectsView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {cases.map((c) => (
+          {projects.map((c) => (
             <article
-              key={c.title}
+              key={c.id}
               className="bg-[#141417] border border-[#242429] flex flex-col justify-between"
             >
               <div>
                 <div className="aspect-[16/10] w-full overflow-hidden bg-[#0B0B0D]">
-                  <ResilientImage
-                    src={c.image}
+                  <MediaStageView
+                    imageUrl={c.imageUrl}
+                    videoUrl={c.videoUrl}
                     alt={c.title}
                     className="w-full h-full object-cover"
                   />
@@ -168,7 +156,7 @@ export const FigmaProjectsView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
               <div className="px-6 pb-6">
                 <button
                   type="button"
-                  onClick={() => onNavigate(c.route)}
+                  onClick={() => onNavigate({ page: 'collection', slug: c.slug })}
                   className="w-full pt-4 border-t border-[#242429] flex items-center justify-between text-xs font-semibold text-white hover:text-[#E5C148] transition-colors cursor-pointer"
                 >
                   <span>Xem dòng thiết bị triển khai</span>
@@ -183,7 +171,15 @@ export const FigmaProjectsView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
   );
 };
 
-export const FigmaInfoView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
+interface InfoViewProps {
+  media?: CmsMediaItem[];
+  onNavigate: (next: FigmaRoute) => void;
+}
+
+export const FigmaInfoView: React.FC<InfoViewProps> = ({
+  media = DEFAULT_MEDIA_LIBRARY,
+  onNavigate,
+}) => {
   const topics = [
     {
       num: '01 / CONTROL PROTOCOLS',
@@ -226,7 +222,7 @@ export const FigmaInfoView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
           Trung Tâm Thông Tin Kỹ Thuật
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {topics.map((t) => (
             <div key={t.num} className="bg-[#141417] border border-[#242429] p-6 sm:p-8">
               <p className="text-[10px] font-semibold tracking-[0.1em] text-[#E5C148] uppercase mb-3">
@@ -237,6 +233,43 @@ export const FigmaInfoView: React.FC<ExtraViewProps> = ({ onNavigate }) => {
             </div>
           ))}
         </div>
+
+        {/* Media Gallery populated by Admin uploads */}
+        {media.length > 0 && (
+          <div className="mb-16 pt-12 border-t border-[#1E1E24]">
+            <p className="text-[11px] font-semibold tracking-[0.12em] text-[#E5C148] uppercase mb-2">
+              STAGE MEDIA GALLERY
+            </p>
+            <h2 className="font-display text-2xl sm:text-3xl font-semibold text-white tracking-[-0.02em] mb-8">
+              Thư viện Hình ảnh &amp; Video Trình diễn
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {media.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-[#141417] border border-[#242429] overflow-hidden"
+                >
+                  <div className="aspect-[16/10] bg-[#0B0B0D]">
+                    <MediaStageView
+                      imageUrl={item.type === 'image' ? item.url : ''}
+                      videoUrl={item.type === 'video' ? item.url : ''}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-4 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-white">{item.title}</p>
+                      <p className="text-xs text-[#9E9EA7] mt-0.5">
+                        {item.category} · {item.type === 'video' ? 'Video' : 'Hình ảnh'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="bg-[#E5C148] p-8 sm:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
