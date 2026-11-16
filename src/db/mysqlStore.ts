@@ -2,6 +2,7 @@ import fs from 'fs';
 import mysql, { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import path from 'path';
 import {
+  COLLECTIONS,
   DEFAULT_MEDIA_LIBRARY,
   DEFAULT_PROJECTS,
   DEFAULT_SITE_SETTINGS,
@@ -48,23 +49,23 @@ const STORE_PATH = path.join(DATA_DIR, 'squaresnake_store.json');
 const SEED_CONTACTS: CustomerInboxItem[] = [
   {
     contact_id: 1,
-    reference_code: 'SS-BG-1001',
+    reference_code: 'SS-BG-0001',
     customer_name: 'Trần Hoàng Nam',
-    phone: 'nam.tran@apexevent.vn · 0912345678',
+    phone: '0912345678 · nam.tran@apexevent.vn',
     company_agency: 'Apex Event Production',
     event_date: '2026-12-24',
     interested_categories: ['Kinetic Balls', '30W Laser'],
     stage_requirements:
       'Sân khấu 28m × 14m × 12m (trong nhà). Cần khoảng 48 quả Kinetic Balls và 4 máy Laser 30W.',
     status: 'quoted',
-    admin_note: 'Đã gửi báo giá sơ bộ qua email ngày 12/11.',
+    admin_note: '',
     created_at: '2026-11-10T09:30:00.000Z',
   },
   {
     contact_id: 2,
-    reference_code: 'SS-BG-1002',
+    reference_code: 'SS-BG-0002',
     customer_name: 'Lê Thảo Vy',
-    phone: 'vy.le@skylight.vn · 0987654321',
+    phone: '0987654321 · vy.le@skylightagency.vn',
     company_agency: 'Skylight Creative Agency',
     event_date: '2026-12-31',
     interested_categories: ['Kinetic Rings', '60-pixel LED Matrix'],
@@ -101,6 +102,92 @@ function getMysqlConfig() {
   return { host, port, user, password, database };
 }
 
+function toModelCode(id: string): string {
+  const map: Record<string, string> = {
+    'led-matrix-20-pixel': 'SS-LM20',
+    'led-matrix-60-pixel': 'SS-LM60',
+    'laser-20w': 'SS-LS20',
+    'laser-30w': 'SS-LS30',
+    'laser-40w': 'SS-LS40',
+    'laser-60w': 'SS-LS60',
+    'kinetic-balls': 'SS-KN-BALL',
+    'kinetic-rings': 'SS-KN-RING',
+    'kinetic-lanterns': 'SS-KN-LANT',
+    'kinetic-milk-drop': 'SS-KN-DROP',
+    'kinetic-metal-spheres': 'SS-KN-METL',
+  };
+  return map[id] || id.toUpperCase().slice(0, 48);
+}
+
+function fromModelCodeToSlugId(modelCode: string): string {
+  const reverse: Record<string, string> = {
+    'SS-LM20': 'led-matrix-20-pixel',
+    'SS-LM60': 'led-matrix-60-pixel',
+    'SS-LS20': 'laser-20w',
+    'SS-LS30': 'laser-30w',
+    'SS-LS40': 'laser-40w',
+    'SS-LS60': 'laser-60w',
+    'SS-KN-BALL': 'kinetic-balls',
+    'SS-KN-RING': 'kinetic-rings',
+    'SS-KN-LANT': 'kinetic-lanterns',
+    'SS-KN-DROP': 'kinetic-milk-drop',
+    'SS-KN-METL': 'kinetic-metal-spheres',
+  };
+  return reverse[modelCode] || modelCode.toLowerCase();
+}
+
+function mapProductRowToFigmaModel(row: RowDataPacket): FigmaProductModel {
+  const slugId = fromModelCodeToSlugId(String(row.model_code || ''));
+  const base = PRODUCT_MODELS.find(
+    (m) => m.id === slugId || m.fullName.toLowerCase() === String(row.product_name || '').toLowerCase()
+  );
+  const collection = (row.category_slug || base?.collection || 'kinetic') as CollectionSlug;
+  const collectionName = String(
+    row.category_name || COLLECTIONS[collection]?.name || 'Kinetic'
+  );
+  const rawSpecs = parseJsonColumn<Record<string, unknown>>(row.technical_specs, {});
+  const specEntries: { label: string; value: string }[] = Array.isArray(rawSpecs)
+    ? (rawSpecs as { label: string; value: string }[])
+    : [
+        { label: 'Model / Variant', value: String(rawSpecs.variant || row.model_code || '') },
+        { label: 'Dimensions / Weight', value: String(rawSpecs.dimensions || 'Theo datasheet') },
+        { label: 'Power / Cable travel', value: String(rawSpecs.cable_travel_or_power || 'Theo cấu hình') },
+        { label: 'Speed / Scan', value: String(rawSpecs.speed || 'Chuyên dụng sân khấu') },
+        { label: 'Control protocol', value: String(rawSpecs.control_protocol || 'DMX512 / Art-Net') },
+        { label: 'Voltage & Weight', value: `${String(rawSpecs.voltage || 'AC 100–240V')} · ${String(rawSpecs.weight || '')}` },
+      ];
+
+  const fullName = String(row.product_name || base?.fullName || 'SquareSnake FX Model');
+  const words = fullName.split(' ');
+  const titleLine1 = base?.titleLine1 || words[0] || fullName;
+  const titleLine2 = base?.titleLine2 || words.slice(1).join(' ') || collectionName;
+
+  return {
+    id: slugId,
+    collection,
+    collectionName,
+    kicker: base?.kicker || `${collectionName.toUpperCase()} / ${String(row.model_code || '')}`,
+    shortLabel: base?.shortLabel || String(rawSpecs.variant || row.model_code || fullName),
+    titleLine1,
+    titleLine2,
+    fullName,
+    cardTag: base?.cardTag || `${collectionName} / ${row.model_code}`,
+    heroSummary: String(row.short_description || base?.heroSummary || ''),
+    imageUrl: String(row.image_url || base?.imageUrl || '/assets/squaresnake/hero-concert.jpg'),
+    videoUrl: String(row.video_demo_url || ''),
+    galleryImages: base?.galleryImages || [],
+    specs: specEntries,
+    specsFootnote:
+      base?.specsFootnote || 'Thông số kỹ thuật được lưu đồng bộ từ cơ sở dữ liệu MySQL.',
+    applicationsLead: base?.applicationsLead || 'Hiệu ứng sân khấu chuyên nghiệp.',
+    applicationsBody:
+      base?.applicationsBody ||
+      'Đồng bộ Timecode DMX512 / Art-Net cho concert, triển lãm và sự kiện quy mô lớn.',
+    applicationsFootnote:
+      base?.applicationsFootnote || 'SquareSnake FX Việt Nam · Showroom Kỹ thuật số 24/7.',
+  };
+}
+
 class SquareSnakeStore {
   private pool: Pool | null = null;
   private initializedMysql = false;
@@ -134,7 +221,6 @@ class SquareSnakeStore {
       throw new Error('MYSQL_HOST chưa được cấu hình.');
     }
 
-    // 1. Ensure database exists
     const bootstrapConn = await mysql.createConnection({
       host: cfg.host,
       port: cfg.port,
@@ -147,7 +233,6 @@ class SquareSnakeStore {
     );
     await bootstrapConn.end();
 
-    // 2. Create connection pool
     this.pool = mysql.createPool({
       host: cfg.host,
       port: cfg.port,
@@ -159,44 +244,30 @@ class SquareSnakeStore {
       charset: 'utf8mb4',
     });
 
-    // 3. Ensure all 6 normalized tables exist
+    // Ensure official 4-table MySQL schema (categories, products, projects, contacts)
     await this.pool.query(`
       CREATE TABLE IF NOT EXISTS categories (
         category_id INT AUTO_INCREMENT PRIMARY KEY,
-        slug VARCHAR(64) NOT NULL UNIQUE,
-        name VARCHAR(120) NOT NULL,
-        kicker VARCHAR(120) NOT NULL,
-        hero_line1 VARCHAR(160) NOT NULL,
-        hero_line2 VARCHAR(160) NOT NULL,
-        hero_description TEXT,
-        hero_image_url VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        category_name VARCHAR(120) NOT NULL,
+        slug VARCHAR(120) NOT NULL UNIQUE,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
 
     await this.pool.query(`
       CREATE TABLE IF NOT EXISTS products (
         product_id INT AUTO_INCREMENT PRIMARY KEY,
-        slug_id VARCHAR(120) NOT NULL UNIQUE,
         category_id INT NOT NULL,
-        kicker VARCHAR(120) NOT NULL,
-        short_label VARCHAR(100) NOT NULL,
-        title_line1 VARCHAR(160) NOT NULL,
-        title_line2 VARCHAR(160) NOT NULL,
-        full_name VARCHAR(200) NOT NULL,
-        card_tag VARCHAR(255) NOT NULL,
-        hero_summary TEXT NOT NULL,
-        image_url VARCHAR(255) NOT NULL,
-        video_url VARCHAR(255) DEFAULT '',
-        gallery_images JSON NOT NULL,
-        specs JSON NOT NULL,
-        specs_footnote TEXT,
-        applications_lead VARCHAR(255),
-        applications_body TEXT,
-        applications_footnote TEXT,
+        product_name VARCHAR(180) NOT NULL,
+        model_code VARCHAR(50) NOT NULL UNIQUE,
+        short_description TEXT,
+        technical_specs JSON NOT NULL,
+        image_url VARCHAR(255),
+        video_demo_url VARCHAR(255),
+        is_featured BOOLEAN DEFAULT FALSE,
+        status ENUM('available', 'maintenance') DEFAULT 'available',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         CONSTRAINT fk_products_category
           FOREIGN KEY (category_id) REFERENCES categories(category_id)
           ON DELETE RESTRICT ON UPDATE CASCADE
@@ -206,219 +277,38 @@ class SquareSnakeStore {
     await this.pool.query(`
       CREATE TABLE IF NOT EXISTS projects (
         project_id INT AUTO_INCREMENT PRIMARY KEY,
-        slug_id VARCHAR(120) NOT NULL UNIQUE,
-        num_label VARCHAR(80) NOT NULL,
-        title VARCHAR(220) NOT NULL,
-        detail VARCHAR(255) NOT NULL,
-        summary TEXT NOT NULL,
-        image_url VARCHAR(255) NOT NULL,
-        video_url VARCHAR(255) DEFAULT '',
-        category_slug VARCHAR(64) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        CONSTRAINT fk_projects_category_slug
-          FOREIGN KEY (category_slug) REFERENCES categories(slug)
-          ON DELETE RESTRICT ON UPDATE CASCADE
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-    `);
-
-    await this.pool.query(`
-      CREATE TABLE IF NOT EXISTS media_assets (
-        media_id INT AUTO_INCREMENT PRIMARY KEY,
-        slug_id VARCHAR(120) NOT NULL UNIQUE,
-        title VARCHAR(200) NOT NULL,
-        media_type ENUM('image', 'video') NOT NULL DEFAULT 'image',
-        url VARCHAR(500) NOT NULL,
-        category VARCHAR(120) NOT NULL DEFAULT 'Thư viện media',
+        event_name VARCHAR(200) NOT NULL,
+        client_name VARCHAR(160) NOT NULL,
+        location VARCHAR(180) NOT NULL,
+        event_date DATE NOT NULL,
+        equipment_used VARCHAR(255) NOT NULL,
+        summary TEXT,
+        thumbnail_url VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
 
     await this.pool.query(`
-      CREATE TABLE IF NOT EXISTS site_settings (
-        setting_id INT PRIMARY KEY,
-        company_name VARCHAR(200) NOT NULL,
-        hero_kicker VARCHAR(160) NOT NULL,
-        hero_title_line1 VARCHAR(160) NOT NULL,
-        hero_title_line2 VARCHAR(160) NOT NULL,
-        hero_description TEXT NOT NULL,
-        hero_image_url VARCHAR(500) NOT NULL,
-        hero_video_url VARCHAR(500) DEFAULT '',
-        about_kicker VARCHAR(160) NOT NULL,
-        about_title_line1 VARCHAR(160) NOT NULL,
-        about_title_line2 VARCHAR(160) NOT NULL,
-        about_description TEXT NOT NULL,
-        about_image_url VARCHAR(500) NOT NULL,
-        footer_description TEXT NOT NULL,
-        phone VARCHAR(60) NOT NULL,
-        zalo VARCHAR(60) NOT NULL,
-        email VARCHAR(160) NOT NULL,
-        address TEXT NOT NULL,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-    `);
-
-    await this.pool.query(`
-      CREATE TABLE IF NOT EXISTS customer_inbox (
+      CREATE TABLE IF NOT EXISTS contacts (
         contact_id INT AUTO_INCREMENT PRIMARY KEY,
-        reference_code VARCHAR(40) NOT NULL UNIQUE,
         customer_name VARCHAR(150) NOT NULL,
-        phone VARCHAR(160) NOT NULL,
-        company_agency VARCHAR(180) NOT NULL,
-        event_date VARCHAR(40) NOT NULL,
-        interested_categories JSON NOT NULL,
-        stage_requirements TEXT NOT NULL,
-        status ENUM('pending', 'contacted', 'quoted') NOT NULL DEFAULT 'pending',
-        admin_note TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        phone VARCHAR(60) NOT NULL,
+        email VARCHAR(150),
+        company_agency VARCHAR(180),
+        event_date DATE,
+        interested_categories VARCHAR(255) NOT NULL,
+        stage_requirements TEXT,
+        status ENUM('pending', 'contacted', 'quoted') DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
-
-    // 4. Seed initial data only if empty
-    const [catRows] = await this.pool.query<RowDataPacket[]>(
-      'SELECT COUNT(*) AS cnt FROM categories'
-    );
-    if (Number(catRows[0]?.cnt || 0) === 0) {
-      await this.pool.query(
-        `INSERT INTO categories (category_id, slug, name, kicker, hero_line1, hero_line2, hero_description, hero_image_url) VALUES
-         (1, 'led-matrix', 'LED Matrix', '01 / LED MATRIX', 'Every pixel.', 'Every possibility.', 'Shape your show with expressive pixel effects.\nExplore 20-pixel and 60-pixel LED Matrix variants.', '/assets/squaresnake/led-matrix.jpg'),
-         (2, 'laser', 'Laser', '02 / LASER', 'Precision light.', 'Powerful impact.', 'Explore laser systems in four power options.\nFind a starting point for your next production.', '/assets/squaresnake/laser.jpg'),
-         (3, 'kinetic', 'Kinetic', '03 / KINETIC', 'Sculpt the air.', 'Move the room.', 'Suspended forms. Choreographed movement.\nExplore five shapes for your kinetic installation.', '/assets/squaresnake/kinetic-balls.jpg')`
-      );
-    }
-
-    const [settingsRows] = await this.pool.query<RowDataPacket[]>(
-      'SELECT COUNT(*) AS cnt FROM site_settings'
-    );
-    if (Number(settingsRows[0]?.cnt || 0) === 0) {
-      const s = DEFAULT_SITE_SETTINGS;
-      await this.pool.query(
-        `INSERT INTO site_settings (
-          setting_id, company_name, hero_kicker, hero_title_line1, hero_title_line2,
-          hero_description, hero_image_url, hero_video_url,
-          about_kicker, about_title_line1, about_title_line2, about_description, about_image_url,
-          footer_description, phone, zalo, email, address
-        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          s.companyName,
-          s.heroKicker,
-          s.heroTitleLine1,
-          s.heroTitleLine2,
-          s.heroDescription,
-          s.heroImageUrl,
-          s.heroVideoUrl,
-          s.aboutKicker,
-          s.aboutTitleLine1,
-          s.aboutTitleLine2,
-          s.aboutDescription,
-          s.aboutImageUrl,
-          s.footerDescription,
-          s.phone,
-          s.zalo,
-          s.email,
-          s.address,
-        ]
-      );
-    }
-
-    const [prodRows] = await this.pool.query<RowDataPacket[]>(
-      'SELECT COUNT(*) AS cnt FROM products'
-    );
-    if (Number(prodRows[0]?.cnt || 0) === 0) {
-      const slugToId: Record<CollectionSlug, number> = {
-        'led-matrix': 1,
-        laser: 2,
-        kinetic: 3,
-      };
-      for (const m of PRODUCT_MODELS) {
-        await this.pool.query(
-          `INSERT INTO products (
-            slug_id, category_id, kicker, short_label, title_line1, title_line2,
-            full_name, card_tag, hero_summary, image_url, video_url, gallery_images,
-            specs, specs_footnote, applications_lead, applications_body, applications_footnote
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            m.id,
-            slugToId[m.collection],
-            m.kicker,
-            m.shortLabel,
-            m.titleLine1,
-            m.titleLine2,
-            m.fullName,
-            m.cardTag,
-            m.heroSummary,
-            m.imageUrl,
-            m.videoUrl || '',
-            JSON.stringify(m.galleryImages || []),
-            JSON.stringify(m.specs || []),
-            m.specsFootnote,
-            m.applicationsLead,
-            m.applicationsBody,
-            m.applicationsFootnote,
-          ]
-        );
-      }
-    }
-
-    const [projRows] = await this.pool.query<RowDataPacket[]>(
-      'SELECT COUNT(*) AS cnt FROM projects'
-    );
-    if (Number(projRows[0]?.cnt || 0) === 0) {
-      for (const p of DEFAULT_PROJECTS) {
-        await this.pool.query(
-          `INSERT INTO projects (slug_id, num_label, title, detail, summary, image_url, video_url, category_slug)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [p.id, p.num, p.title, p.detail, p.summary, p.imageUrl, p.videoUrl || '', p.slug]
-        );
-      }
-    }
-
-    const [mediaRows] = await this.pool.query<RowDataPacket[]>(
-      'SELECT COUNT(*) AS cnt FROM media_assets'
-    );
-    if (Number(mediaRows[0]?.cnt || 0) === 0) {
-      for (const item of DEFAULT_MEDIA_LIBRARY) {
-        await this.pool.query(
-          `INSERT INTO media_assets (slug_id, title, media_type, url, category)
-           VALUES (?, ?, ?, ?, ?)`,
-          [item.id, item.title, item.type, item.url, item.category]
-        );
-      }
-    }
-
-    const [inboxRows] = await this.pool.query<RowDataPacket[]>(
-      'SELECT COUNT(*) AS cnt FROM customer_inbox'
-    );
-    if (Number(inboxRows[0]?.cnt || 0) === 0) {
-      for (const c of SEED_CONTACTS) {
-        await this.pool.query(
-          `INSERT INTO customer_inbox (
-            reference_code, customer_name, phone, company_agency, event_date,
-            interested_categories, stage_requirements, status, admin_note
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            c.reference_code,
-            c.customer_name,
-            c.phone,
-            c.company_agency,
-            c.event_date,
-            JSON.stringify(c.interested_categories),
-            c.stage_requirements,
-            c.status,
-            c.admin_note || '',
-          ]
-        );
-      }
-    }
 
     this.initializedMysql = true;
     console.log(
-      `[MySQL] Đã kết nối & đồng bộ database '${cfg.database}' tại ${cfg.host}:${cfg.port}`
+      `[MySQL] Đã kết nối tới database 4 bảng '${cfg.database}' tại ${cfg.host}:${cfg.port}`
     );
   }
 
-  // Fallback JSON store helpers when running inside cloud sandbox without MySQL host
   private readJsonStore(): JsonStoreShape {
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -489,139 +379,118 @@ class SquareSnakeStore {
   }
 
   public async getCategories(): Promise<CategoryRow[]> {
+    const defaults: Record<string, CategoryRow> = {
+      'led-matrix': {
+        category_id: 1,
+        slug: 'led-matrix',
+        name: 'LED Matrix',
+        kicker: '01 / LED MATRIX',
+        hero_line1: 'Every pixel.',
+        hero_line2: 'Every possibility.',
+        hero_description: 'LED Matrix 20-pixel & 60-pixel',
+        hero_image_url: '/assets/squaresnake/led-matrix.jpg',
+      },
+      laser: {
+        category_id: 2,
+        slug: 'laser',
+        name: 'Laser',
+        kicker: '02 / LASER',
+        hero_line1: 'Precision light.',
+        hero_line2: 'Powerful impact.',
+        hero_description: 'Laser 20W / 30W / 40W / 60W',
+        hero_image_url: '/assets/squaresnake/laser.jpg',
+      },
+      kinetic: {
+        category_id: 3,
+        slug: 'kinetic',
+        name: 'Kinetic',
+        kicker: '03 / KINETIC',
+        hero_line1: 'Sculpt the air.',
+        hero_line2: 'Move the room.',
+        hero_description: 'Kinetic Balls, Rings, Lanterns, Milk-drop, Metal spheres',
+        hero_image_url: '/assets/squaresnake/kinetic-balls.jpg',
+      },
+    };
+
     if (!this.isMysqlEnabled()) {
-      return [
-        {
-          category_id: 1,
-          slug: 'led-matrix',
-          name: 'LED Matrix',
-          kicker: '01 / LED MATRIX',
-          hero_line1: 'Every pixel.',
-          hero_line2: 'Every possibility.',
-          hero_description: 'LED Matrix 20-pixel & 60-pixel',
-          hero_image_url: '/assets/squaresnake/led-matrix.jpg',
-        },
-        {
-          category_id: 2,
-          slug: 'laser',
-          name: 'Laser',
-          kicker: '02 / LASER',
-          hero_line1: 'Precision light.',
-          hero_line2: 'Powerful impact.',
-          hero_description: 'Laser 20W / 30W / 40W / 60W',
-          hero_image_url: '/assets/squaresnake/laser.jpg',
-        },
-        {
-          category_id: 3,
-          slug: 'kinetic',
-          name: 'Kinetic',
-          kicker: '03 / KINETIC',
-          hero_line1: 'Sculpt the air.',
-          hero_line2: 'Move the room.',
-          hero_description: 'Kinetic Balls, Rings, Lanterns, Milk-drop, Metal spheres',
-          hero_image_url: '/assets/squaresnake/kinetic-balls.jpg',
-        },
-      ];
+      return Object.values(defaults);
     }
+
     const pool = await this.ensureMysql();
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT category_id, slug, name, kicker, hero_line1, hero_line2, hero_description, hero_image_url FROM categories ORDER BY category_id ASC'
+      'SELECT category_id, category_name, slug, description FROM categories ORDER BY category_id ASC'
     );
-    return rows as CategoryRow[];
+    if (!rows.length) return Object.values(defaults);
+    return rows.map((r) => {
+      const slug = String(r.slug || 'kinetic') as CollectionSlug;
+      const base = defaults[slug] || defaults.kinetic;
+      return {
+        category_id: Number(r.category_id),
+        slug,
+        name: String(r.category_name || base.name),
+        kicker: base.kicker,
+        hero_line1: base.hero_line1,
+        hero_line2: base.hero_line2,
+        hero_description: String(r.description || base.hero_description),
+        hero_image_url: base.hero_image_url,
+      };
+    });
   }
 
   public async getPublicCms(): Promise<PublicCmsPayload> {
+    const jsonState = this.readJsonStore();
     if (!this.isMysqlEnabled()) {
-      const s = this.readJsonStore();
       return {
-        siteSettings: s.siteSettings,
-        models: s.catalogModels,
-        projects: s.cmsProjects,
-        media: s.media,
+        siteSettings: jsonState.siteSettings,
+        models: jsonState.catalogModels,
+        projects: jsonState.cmsProjects,
+        media: jsonState.media,
       };
     }
 
     const pool = await this.ensureMysql();
-    const [settingsRows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM site_settings WHERE setting_id = 1 LIMIT 1'
-    );
-    const sr = settingsRows[0];
-    const siteSettings: SiteSettings = sr
-      ? {
-          companyName: sr.company_name,
-          heroKicker: sr.hero_kicker,
-          heroTitleLine1: sr.hero_title_line1,
-          heroTitleLine2: sr.hero_title_line2,
-          heroDescription: sr.hero_description,
-          heroImageUrl: sr.hero_image_url,
-          heroVideoUrl: sr.hero_video_url || '',
-          aboutKicker: sr.about_kicker,
-          aboutTitleLine1: sr.about_title_line1,
-          aboutTitleLine2: sr.about_title_line2,
-          aboutDescription: sr.about_description,
-          aboutImageUrl: sr.about_image_url,
-          footerDescription: sr.footer_description,
-          phone: sr.phone,
-          zalo: sr.zalo,
-          email: sr.email,
-          address: sr.address,
-        }
-      : DEFAULT_SITE_SETTINGS;
-
     const [prodRows] = await pool.query<RowDataPacket[]>(
-      `SELECT p.*, c.slug AS collection_slug, c.name AS collection_name
+      `SELECT p.*, c.category_name, c.slug AS category_slug
        FROM products p
-       JOIN categories c ON p.category_id = c.category_id
-       ORDER BY p.product_id ASC`
+       INNER JOIN categories c ON p.category_id = c.category_id
+       ORDER BY p.category_id ASC, p.product_id ASC`
     );
-    const models: FigmaProductModel[] = prodRows.map((r) => ({
-      id: r.slug_id,
-      collection: r.collection_slug as CollectionSlug,
-      collectionName: r.collection_name,
-      kicker: r.kicker,
-      shortLabel: r.short_label,
-      titleLine1: r.title_line1,
-      titleLine2: r.title_line2,
-      fullName: r.full_name,
-      cardTag: r.card_tag,
-      heroSummary: r.hero_summary,
-      imageUrl: r.image_url,
-      videoUrl: r.video_url || '',
-      galleryImages: parseJsonColumn<string[]>(r.gallery_images, []),
-      specs: parseJsonColumn<{ label: string; value: string }[]>(r.specs, []),
-      specsFootnote: r.specs_footnote || '',
-      applicationsLead: r.applications_lead || '',
-      applicationsBody: r.applications_body || '',
-      applicationsFootnote: r.applications_footnote || '',
-    }));
+    const models =
+      prodRows.length > 0
+        ? prodRows.map(mapProductRowToFigmaModel)
+        : jsonState.catalogModels;
 
     const [projRows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM projects ORDER BY project_id DESC'
+      'SELECT * FROM projects ORDER BY event_date DESC, project_id DESC'
     );
-    const projects: CmsProjectCase[] = projRows.map((r) => ({
-      id: r.slug_id,
-      num: r.num_label,
-      title: r.title,
-      detail: r.detail,
-      summary: r.summary,
-      imageUrl: r.image_url,
-      videoUrl: r.video_url || '',
-      slug: r.category_slug as CollectionSlug,
-    }));
+    const projects: CmsProjectCase[] =
+      projRows.length > 0
+        ? projRows.map((r, idx) => {
+            const equip = String(r.equipment_used || '');
+            const inferredSlug: CollectionSlug = /laser/i.test(equip)
+              ? 'laser'
+              : /matrix/i.test(equip)
+              ? 'led-matrix'
+              : 'kinetic';
+            return {
+              id: `proj-${r.project_id}`,
+              num: `0${idx + 1} / ${String(r.location || 'PROJECT')}`,
+              title: String(r.event_name || ''),
+              detail: equip,
+              summary: String(r.summary || ''),
+              imageUrl: String(r.thumbnail_url || '/assets/squaresnake/hero-concert.jpg'),
+              videoUrl: '',
+              slug: inferredSlug,
+            };
+          })
+        : jsonState.cmsProjects;
 
-    const [mediaRows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM media_assets ORDER BY media_id DESC'
-    );
-    const media: CmsMediaItem[] = mediaRows.map((r) => ({
-      id: r.slug_id,
-      title: r.title,
-      type: r.media_type === 'video' ? 'video' : 'image',
-      url: r.url,
-      category: r.category,
-      createdAt: new Date(r.created_at).toISOString(),
-    }));
-
-    return { siteSettings, models, projects, media };
+    return {
+      siteSettings: jsonState.siteSettings,
+      models,
+      projects,
+      media: jsonState.media,
+    };
   }
 
   public async getProductsFiltered(filters: {
@@ -648,44 +517,10 @@ class SquareSnakeStore {
   }
 
   public async updateSiteSettings(patch: Partial<SiteSettings>): Promise<SiteSettings> {
-    if (!this.isMysqlEnabled()) {
-      const store = this.readJsonStore();
-      store.siteSettings = { ...store.siteSettings, ...patch };
-      this.writeJsonStore(store);
-      return store.siteSettings;
-    }
-    const pool = await this.ensureMysql();
-    const current = (await this.getPublicCms()).siteSettings;
-    const next = { ...current, ...patch };
-    await pool.query(
-      `UPDATE site_settings SET
-        company_name = ?, hero_kicker = ?, hero_title_line1 = ?, hero_title_line2 = ?,
-        hero_description = ?, hero_image_url = ?, hero_video_url = ?,
-        about_kicker = ?, about_title_line1 = ?, about_title_line2 = ?,
-        about_description = ?, about_image_url = ?, footer_description = ?,
-        phone = ?, zalo = ?, email = ?, address = ?
-      WHERE setting_id = 1`,
-      [
-        next.companyName,
-        next.heroKicker,
-        next.heroTitleLine1,
-        next.heroTitleLine2,
-        next.heroDescription,
-        next.heroImageUrl,
-        next.heroVideoUrl,
-        next.aboutKicker,
-        next.aboutTitleLine1,
-        next.aboutTitleLine2,
-        next.aboutDescription,
-        next.aboutImageUrl,
-        next.footerDescription,
-        next.phone,
-        next.zalo,
-        next.email,
-        next.address,
-      ]
-    );
-    return next;
+    const store = this.readJsonStore();
+    store.siteSettings = { ...store.siteSettings, ...patch };
+    this.writeJsonStore(store);
+    return store.siteSettings;
   }
 
   public async createModel(
@@ -759,30 +594,21 @@ class SquareSnakeStore {
       [created.collection]
     );
     const categoryId = Number(catRows[0]?.category_id || 1);
+    const modelCode = toModelCode(created.id);
+
     await pool.query(
       `INSERT INTO products (
-        slug_id, category_id, kicker, short_label, title_line1, title_line2,
-        full_name, card_tag, hero_summary, image_url, video_url, gallery_images,
-        specs, specs_footnote, applications_lead, applications_body, applications_footnote
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        category_id, product_name, model_code, short_description,
+        technical_specs, image_url, video_demo_url, is_featured, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, FALSE, 'available')`,
       [
-        created.id,
         categoryId,
-        created.kicker,
-        created.shortLabel,
-        created.titleLine1,
-        created.titleLine2,
         created.fullName,
-        created.cardTag,
+        modelCode,
         created.heroSummary,
+        JSON.stringify(created.specs || []),
         created.imageUrl,
         created.videoUrl || '',
-        JSON.stringify(created.galleryImages || []),
-        JSON.stringify(created.specs || []),
-        created.specsFootnote,
-        created.applicationsLead,
-        created.applicationsBody,
-        created.applicationsFootnote,
       ]
     );
     return created;
@@ -792,15 +618,16 @@ class SquareSnakeStore {
     slugId: string,
     patch: Partial<FigmaProductModel>
   ): Promise<FigmaProductModel | null> {
+    const collectionLabels: Record<CollectionSlug, string> = {
+      'led-matrix': 'LED Matrix',
+      laser: 'Laser',
+      kinetic: 'Kinetic',
+    };
+
     if (!this.isMysqlEnabled()) {
       const store = this.readJsonStore();
       const idx = store.catalogModels.findIndex((m) => m.id === slugId);
       if (idx === -1) return null;
-      const collectionLabels: Record<CollectionSlug, string> = {
-        'led-matrix': 'LED Matrix',
-        laser: 'Laser',
-        kinetic: 'Kinetic',
-      };
       const nextCollection = patch.collection || store.catalogModels[idx].collection;
       store.catalogModels[idx] = {
         ...store.catalogModels[idx],
@@ -817,11 +644,6 @@ class SquareSnakeStore {
     const existing = (await this.getPublicCms()).models.find((m) => m.id === slugId);
     if (!existing) return null;
 
-    const collectionLabels: Record<CollectionSlug, string> = {
-      'led-matrix': 'LED Matrix',
-      laser: 'Laser',
-      kinetic: 'Kinetic',
-    };
     const nextCollection = patch.collection || existing.collection;
     const next: FigmaProductModel = {
       ...existing,
@@ -836,32 +658,21 @@ class SquareSnakeStore {
       [next.collection]
     );
     const categoryId = Number(catRows[0]?.category_id || 1);
+    const modelCode = toModelCode(slugId);
 
     await pool.query(
       `UPDATE products SET
-        category_id = ?, kicker = ?, short_label = ?, title_line1 = ?, title_line2 = ?,
-        full_name = ?, card_tag = ?, hero_summary = ?, image_url = ?, video_url = ?,
-        gallery_images = ?, specs = ?, specs_footnote = ?,
-        applications_lead = ?, applications_body = ?, applications_footnote = ?
-      WHERE slug_id = ?`,
+        category_id = ?, product_name = ?, short_description = ?,
+        technical_specs = ?, image_url = ?, video_demo_url = ?
+      WHERE model_code = ?`,
       [
         categoryId,
-        next.kicker,
-        next.shortLabel,
-        next.titleLine1,
-        next.titleLine2,
         next.fullName,
-        next.cardTag,
         next.heroSummary,
+        JSON.stringify(next.specs || []),
         next.imageUrl,
         next.videoUrl || '',
-        JSON.stringify(next.galleryImages || []),
-        JSON.stringify(next.specs || []),
-        next.specsFootnote,
-        next.applicationsLead,
-        next.applicationsBody,
-        next.applicationsFootnote,
-        slugId,
+        modelCode,
       ]
     );
     return next;
@@ -877,9 +688,10 @@ class SquareSnakeStore {
       return true;
     }
     const pool = await this.ensureMysql();
+    const modelCode = toModelCode(slugId);
     const [res] = await pool.query<ResultSetHeader>(
-      'DELETE FROM products WHERE slug_id = ?',
-      [slugId]
+      'DELETE FROM products WHERE model_code = ? OR product_id = ?',
+      [modelCode, Number(slugId) || -1]
     );
     return res.affectedRows > 0;
   }
@@ -908,20 +720,21 @@ class SquareSnakeStore {
     }
 
     const pool = await this.ensureMysql();
-    await pool.query(
-      `INSERT INTO projects (slug_id, num_label, title, detail, summary, image_url, video_url, category_slug)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    const today = new Date().toISOString().slice(0, 10);
+    const [res] = await pool.query<ResultSetHeader>(
+      `INSERT INTO projects (event_name, client_name, location, event_date, equipment_used, summary, thumbnail_url)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
-        created.id,
-        created.num,
         created.title,
+        'SquareSnake FX Client',
+        created.num,
+        today,
         created.detail,
         created.summary,
         created.imageUrl,
-        created.videoUrl || '',
-        created.slug,
       ]
     );
+    created.id = `proj-${res.insertId}`;
     return created;
   }
 
@@ -938,25 +751,17 @@ class SquareSnakeStore {
       return store.cmsProjects[idx];
     }
 
+    const numericId = Number(slugId.replace('proj-', ''));
+    if (!numericId) return null;
     const pool = await this.ensureMysql();
     const existing = (await this.getPublicCms()).projects.find((p) => p.id === slugId);
     if (!existing) return null;
     const next = { ...existing, ...patch, id: slugId };
     await pool.query(
       `UPDATE projects SET
-        num_label = ?, title = ?, detail = ?, summary = ?,
-        image_url = ?, video_url = ?, category_slug = ?
-      WHERE slug_id = ?`,
-      [
-        next.num,
-        next.title,
-        next.detail,
-        next.summary,
-        next.imageUrl,
-        next.videoUrl || '',
-        next.slug,
-        slugId,
-      ]
+        event_name = ?, location = ?, equipment_used = ?, summary = ?, thumbnail_url = ?
+      WHERE project_id = ?`,
+      [next.title, next.num, next.detail, next.summary, next.imageUrl, numericId]
     );
     return next;
   }
@@ -970,55 +775,30 @@ class SquareSnakeStore {
       this.writeJsonStore(store);
       return true;
     }
+    const numericId = Number(slugId.replace('proj-', ''));
+    if (!numericId) return false;
     const pool = await this.ensureMysql();
     const [res] = await pool.query<ResultSetHeader>(
-      'DELETE FROM projects WHERE slug_id = ?',
-      [slugId]
+      'DELETE FROM projects WHERE project_id = ?',
+      [numericId]
     );
     return res.affectedRows > 0;
   }
 
   public async addMedia(item: CmsMediaItem): Promise<CmsMediaItem> {
-    if (!this.isMysqlEnabled()) {
-      const store = this.readJsonStore();
-      store.media.unshift(item);
-      this.writeJsonStore(store);
-      return item;
-    }
-    const pool = await this.ensureMysql();
-    await pool.query(
-      `INSERT INTO media_assets (slug_id, title, media_type, url, category)
-       VALUES (?, ?, ?, ?, ?)`,
-      [item.id, item.title, item.type, item.url, item.category]
-    );
+    const store = this.readJsonStore();
+    store.media.unshift(item);
+    this.writeJsonStore(store);
     return item;
   }
 
   public async deleteMedia(slugId: string): Promise<CmsMediaItem | null> {
-    if (!this.isMysqlEnabled()) {
-      const store = this.readJsonStore();
-      const target = store.media.find((m) => m.id === slugId) || null;
-      if (!target) return null;
-      store.media = store.media.filter((m) => m.id !== slugId);
-      this.writeJsonStore(store);
-      return target;
-    }
-    const pool = await this.ensureMysql();
-    const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM media_assets WHERE slug_id = ? LIMIT 1',
-      [slugId]
-    );
-    const r = rows[0];
-    if (!r) return null;
-    await pool.query('DELETE FROM media_assets WHERE slug_id = ?', [slugId]);
-    return {
-      id: r.slug_id,
-      title: r.title,
-      type: r.media_type === 'video' ? 'video' : 'image',
-      url: r.url,
-      category: r.category,
-      createdAt: new Date(r.created_at).toISOString(),
-    };
+    const store = this.readJsonStore();
+    const target = store.media.find((m) => m.id === slugId) || null;
+    if (!target) return null;
+    store.media = store.media.filter((m) => m.id !== slugId);
+    this.writeJsonStore(store);
+    return target;
   }
 
   public async getInbox(): Promise<CustomerInboxItem[]> {
@@ -1031,19 +811,22 @@ class SquareSnakeStore {
     }
     const pool = await this.ensureMysql();
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM customer_inbox ORDER BY contact_id DESC'
+      'SELECT * FROM contacts ORDER BY contact_id DESC'
     );
     return rows.map((r) => ({
       contact_id: Number(r.contact_id),
-      reference_code: r.reference_code,
-      customer_name: r.customer_name,
-      phone: r.phone,
-      company_agency: r.company_agency,
-      event_date: r.event_date,
-      interested_categories: parseJsonColumn<string[]>(r.interested_categories, []),
-      stage_requirements: r.stage_requirements,
+      reference_code: `SS-BG-${String(r.contact_id).padStart(4, '0')}`,
+      customer_name: String(r.customer_name || ''),
+      phone: `${String(r.phone || '')}${r.email ? ` · ${r.email}` : ''}`,
+      company_agency: String(r.company_agency || 'Khách trực tiếp'),
+      event_date: r.event_date ? String(r.event_date).slice(0, 10) : 'Chưa ấn định',
+      interested_categories: String(r.interested_categories || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+      stage_requirements: String(r.stage_requirements || ''),
       status: r.status as 'pending' | 'contacted' | 'quoted',
-      admin_note: r.admin_note || '',
+      admin_note: '',
       created_at: new Date(r.created_at).toISOString(),
     }));
   }
@@ -1062,7 +845,7 @@ class SquareSnakeStore {
         store.contacts.length > 0
           ? Math.max(...store.contacts.map((c) => c.contact_id)) + 1
           : 1;
-      const referenceCode = `SS-BG-${String(1000 + nextId)}`;
+      const referenceCode = `SS-BG-${String(nextId).padStart(4, '0')}`;
       const item: CustomerInboxItem = {
         contact_id: nextId,
         reference_code: referenceCode,
@@ -1083,35 +866,33 @@ class SquareSnakeStore {
     }
 
     const pool = await this.ensureMysql();
-    const tempCode = `SS-BG-${Date.now().toString().slice(-6)}`;
+    const validDate =
+      input.event_date && /^\d{4}-\d{2}-\d{2}$/.test(input.event_date.trim())
+        ? input.event_date.trim()
+        : null;
+
     const [res] = await pool.query<ResultSetHeader>(
-      `INSERT INTO customer_inbox (
-        reference_code, customer_name, phone, company_agency, event_date,
-        interested_categories, stage_requirements, status, admin_note
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', '')`,
+      `INSERT INTO contacts (
+        customer_name, phone, company_agency, event_date,
+        interested_categories, stage_requirements, status
+      ) VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
       [
-        tempCode,
         input.customer_name,
         input.phone,
         input.company_agency?.trim() || 'Khách hàng trực tiếp',
-        input.event_date?.trim() || 'Chưa ấn định',
-        JSON.stringify(input.interested_categories),
+        validDate,
+        input.interested_categories.join(', '),
         input.stage_requirements?.trim() || 'Cần kỹ sư tư vấn khảo sát thực tế',
       ]
     );
     const contactId = res.insertId;
-    const referenceCode = `SS-BG-${String(1000 + contactId)}`;
-    await pool.query(
-      'UPDATE customer_inbox SET reference_code = ? WHERE contact_id = ?',
-      [referenceCode, contactId]
-    );
     return {
       contact_id: contactId,
-      reference_code: referenceCode,
+      reference_code: `SS-BG-${String(contactId).padStart(4, '0')}`,
       customer_name: input.customer_name,
       phone: input.phone,
       company_agency: input.company_agency?.trim() || 'Khách hàng trực tiếp',
-      event_date: input.event_date?.trim() || 'Chưa ấn định',
+      event_date: validDate || 'Chưa ấn định',
       interested_categories: input.interested_categories,
       stage_requirements:
         input.stage_requirements?.trim() || 'Cần kỹ sư tư vấn khảo sát thực tế',
@@ -1137,19 +918,15 @@ class SquareSnakeStore {
 
     const pool = await this.ensureMysql();
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM customer_inbox WHERE contact_id = ? LIMIT 1',
+      'SELECT * FROM contacts WHERE contact_id = ? LIMIT 1',
       [contactId]
     );
     if (!rows[0]) return null;
     const nextStatus = patch.status || rows[0].status;
-    const nextNote =
-      typeof patch.admin_note === 'string'
-        ? patch.admin_note
-        : rows[0].admin_note || '';
-    await pool.query(
-      'UPDATE customer_inbox SET status = ?, admin_note = ? WHERE contact_id = ?',
-      [nextStatus, nextNote, contactId]
-    );
+    await pool.query('UPDATE contacts SET status = ? WHERE contact_id = ?', [
+      nextStatus,
+      contactId,
+    ]);
     const updatedList = await this.getInbox();
     return updatedList.find((c) => c.contact_id === contactId) || null;
   }
@@ -1165,7 +942,7 @@ class SquareSnakeStore {
     }
     const pool = await this.ensureMysql();
     const [res] = await pool.query<ResultSetHeader>(
-      'DELETE FROM customer_inbox WHERE contact_id = ?',
+      'DELETE FROM contacts WHERE contact_id = ?',
       [contactId]
     );
     return res.affectedRows > 0;

@@ -1,19 +1,25 @@
 -- =============================================================================
 -- CƠ SỞ DỮ LIỆU: SQUARESNAKE FX VIỆT NAM (STAGE EFFECTS & EVENT EQUIPMENT)
--- Tương thích: MySQL 8.0+ / MariaDB 10.4+ (phpMyAdmin / XAMPP Local Server)
--- 4 Bảng dữ liệu lõi: categories, products, projects, contacts
+-- Tương thích: MySQL 8.0+ / MariaDB 10.4+ (phpMyAdmin / XAMPP / MySQL Workbench)
+-- 4 Bảng dữ liệu chính: categories, products, projects, contacts
 -- =============================================================================
-CREATE DATABASE IF NOT EXISTS squaresnake_db
+
+CREATE DATABASE IF NOT EXISTS squaresnake_fx
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE squaresnake_db;
+USE squaresnake_fx;
 
--- Xóa bảng cũ nếu import lại (theo đúng thứ tự khóa ngoại)
+-- Xóa bảng cũ theo đúng thứ tự khóa ngoại khi import lại từ đầu
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS media_assets;
+DROP TABLE IF EXISTS customer_inbox;
+DROP TABLE IF EXISTS site_settings;
 DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- -----------------------------------------------------------------------------
 -- 1. Bảng categories: Danh mục nhóm thiết bị hiệu ứng sân khấu
@@ -27,7 +33,7 @@ CREATE TABLE categories (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
--- 2. Bảng products: Chi tiết thiết bị hiệu ứng sự kiện (LED Matrix, Laser, Kinetic)
+-- 2. Bảng products: Chi tiết thiết bị hiệu ứng (LED Matrix, Laser, Kinetic)
 -- -----------------------------------------------------------------------------
 CREATE TABLE products (
   product_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,7 +56,7 @@ CREATE TABLE products (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
--- 3. Bảng projects: Hồ sơ sự kiện thực tế (Portfolio)
+-- 3. Bảng projects: Hồ sơ dự án sân khấu thực tế (Case Studies)
 -- -----------------------------------------------------------------------------
 CREATE TABLE projects (
   project_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -62,11 +68,11 @@ CREATE TABLE projects (
   summary TEXT,
   thumbnail_url VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_projects_date (event_date DESC)
+  INDEX idx_projects_date (event_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
--- 4. Bảng contacts: Yêu cầu tư vấn và báo giá từ khách hàng
+-- 4. Bảng contacts: Yêu cầu tư vấn & báo giá từ khách hàng
 -- -----------------------------------------------------------------------------
 CREATE TABLE contacts (
   contact_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -80,17 +86,17 @@ CREATE TABLE contacts (
   status ENUM('pending', 'contacted', 'quoted') DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_contacts_status (status),
-  INDEX idx_contacts_created (created_at DESC)
+  INDEX idx_contacts_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
--- DỮ LIỆU MẪU THỰC TẾ (SEED DATA - 11 MODELS FIGMA + DỰ ÁN + BÁO GIÁ)
+-- DỮ LIỆU MẪU BAN ĐẦU (INITIAL SAMPLE DATA)
 -- =============================================================================
 
 INSERT INTO categories (category_id, category_name, slug, description) VALUES
-(1, 'LED Matrix', 'led-matrix', 'Hệ thống ma trận điểm ảnh LED lập trình pixel (20-pixel, 60-pixel), ghép nối modular cho concert và lễ hội.'),
-(2, 'Laser', 'laser', 'Hệ thống trình diễn Laser công suất thực 20W, 30W, 40W, 60W Pure Diode RGB điều khiển qua Pangolin FB4.'),
-(3, 'Kinetic', 'kinetic', 'Hệ thống cơ khí nâng hạ nghệ thuật 5 hình dáng: Balls, Rings, Lanterns, Milk-drop và Metal spheres.');
+(1, 'LED Matrix', 'led-matrix', 'Hệ thống ma trận điểm ảnh LED lập trình 3D (20-pixel, 60-pixel), ghép nối modular không viền cho concert và lễ hội.'),
+(2, 'Laser', 'laser', 'Hệ thống trình diễn Laser công suất thực 20W–60W Pure Diode RGB chuẩn IP65 điều khiển qua mạng Pangolin FB4.'),
+(3, 'Kinetic', 'kinetic', 'Hệ thống cơ khí nâng hạ nghệ thuật đồng bộ DMX512 / Art-Net / Madrix gồm 5 dòng: Balls, Rings, Lanterns, Milk-drop và Metal spheres.');
 
 INSERT INTO products (
   category_id, product_name, model_code, short_description,
@@ -101,10 +107,10 @@ INSERT INTO products (
   1,
   '20-pixel LED Matrix',
   'SS-LM20',
-  'Biến thể 20-pixel LED Matrix chuyên tạo hiệu ứng chasing, sóng ánh sáng và ma trận hình học sắc nét.',
+  'Ma trận điểm ảnh LED 20-pixel trang bị chip COB công suất cao ánh sáng ấm tungsten và viền RGB halo, tạo hiệu ứng chasing sắc nét.',
   JSON_OBJECT(
     'variant', '20-pixel',
-    'dimensions', '580 × 460 × 140 mm · 11.5 kg',
+    'dimensions', '580 × 460 × 140 mm',
     'cable_travel_or_power', '20 × 30W COB Warm White + RGB Halo (640W)',
     'speed', 'Tần số làm tươi 18.000 Hz · Pixel chase 60fps',
     'control_protocol', 'DMX512 / Art-Net / sACN / Madrix',
@@ -120,10 +126,10 @@ INSERT INTO products (
   1,
   '60-pixel LED Matrix',
   'SS-LM60',
-  'Biến thể 60-pixel LED Matrix mật độ điểm ảnh cao cho sân khấu đại nhạc hội và truyền hình trực tiếp.',
+  'Ma trận LED 60-pixel mật độ điểm ảnh cao, ghép nối modular thành bức tường ánh sáng 3D cho đại nhạc hội và truyền hình trực tiếp.',
   JSON_OBJECT(
     'variant', '60-pixel',
-    'dimensions', '1000 × 600 × 150 mm · 18.2 kg',
+    'dimensions', '1000 × 600 × 150 mm',
     'cable_travel_or_power', '60 × 20W RGBW Pixel + Tungsten Effect (1.200W)',
     'speed', 'Tần số làm tươi 18.000 Hz · Pixel mapping 3D',
     'control_protocol', 'Art-Net / sACN / DMX512 / Kling-Net',
@@ -141,11 +147,11 @@ INSERT INTO products (
   2,
   '20W Laser',
   'SS-LS20',
-  'Hệ thống Laser công suất 20W cho sự kiện trong nhà, câu lạc bộ và sân khấu hội nghị chuyên nghiệp.',
+  'Máy trình diễn Laser Full-Color 20W cho sân khấu trong nhà, club và sự kiện hội nghị cần độ sắc nét tia cao.',
   JSON_OBJECT(
     'variant', '20W Pure Diode RGB',
     'dimensions', '380 × 280 × 210 mm',
-    'cable_travel_or_power', '20.000 mW RGB (R:5W / G:6W / B:9W)',
+    'cable_travel_or_power', '20.000 mW Pure Diode (R:5W / G:6W / B:9W)',
     'speed', 'Quét tia Galvo 40Kpps @ 8° (Góc mở 60°)',
     'control_protocol', 'Pangolin FB4 / LAN / Art-Net / DMX512',
     'voltage', 'AC 100–240V, 600W',
@@ -160,11 +166,11 @@ INSERT INTO products (
   2,
   '30W Laser',
   'SS-LS30',
-  'Hệ thống Laser 30W chuẩn chống nước IP65 ngoài trời, tích hợp bộ giải mã mạng Pangolin FB4.',
+  'Hệ thống trình diễn Laser công suất thực 30W Pure Diode RGB chống bụi nước IP65 ngoài trời, tích hợp Pangolin FB4.',
   JSON_OBJECT(
     'variant', '30W IP65 Outdoor',
     'dimensions', '485 × 340 × 260 mm',
-    'cable_travel_or_power', '30.000 mW Pure Diode RGB (R:8W / G:10W / B:12W)',
+    'cable_travel_or_power', '30.000 mW Pure Diode (R:8W / G:10W / B:12W)',
     'speed', 'Quét tia Galvo 45Kpps @ 8°',
     'control_protocol', 'Pangolin FB4 (LAN / Art-Net / DMX)',
     'voltage', 'AC 100–240V, 950W',
@@ -179,7 +185,7 @@ INSERT INTO products (
   2,
   '40W Laser',
   'SS-LS40',
-  'Hệ thống Laser công suất lớn 40W tạo quạt tia và hiệu ứng không trung tầm xa cho lễ hội âm nhạc.',
+  'Hệ thống Laser công suất lớn 40W tạo quạt tia và hiệu ứng không trung tầm xa cho lễ hội âm nhạc ngoài trời.',
   JSON_OBJECT(
     'variant', '40W High-Power',
     'dimensions', '520 × 360 × 275 mm',
@@ -198,7 +204,7 @@ INSERT INTO products (
   2,
   '60W Laser',
   'SS-LS60',
-  'Hệ thống Laser công suất cực đại 60W cho sân vận động, quảng trường và show trình diễn ngoài trời quy mô hàng chục nghìn khán giả.',
+  'Hệ thống Laser công suất cực đại 60W cho sân vận động và quảng trường quy mô hàng chục nghìn khán giả.',
   JSON_OBJECT(
     'variant', '60W Stadium Grade',
     'dimensions', '610 × 410 × 310 mm',
@@ -222,9 +228,9 @@ INSERT INTO products (
   'Quả cầu LED khuếch tán 360 độ kết hợp tời kéo servo siêu êm 6m–12m, tạo sóng chuyển động không gian đồng bộ âm nhạc.',
   JSON_OBJECT(
     'variant', 'Balls (250mm / 350mm)',
-    'dimensions', 'Đường kính bóng 250 mm · Tời 320×210×280 mm',
+    'dimensions', 'Đường kính bóng 250 mm · Cụm tời 320×210×280 mm',
     'cable_travel_or_power', 'Hành trình cáp 6m – 12m · LED 18W RGBW',
-    'speed', '0.1 – 1.2 m/s (Gia tốc mượt, < 36dB)',
+    'speed', '0.1 – 1.2 m/s (Độ ồn < 36dB)',
     'control_protocol', 'Art-Net / DMX512 / Madrix 3D',
     'voltage', 'AC 100–240V, 50/60Hz (110W)',
     'weight', '7.8 kg / bộ'
@@ -238,7 +244,7 @@ INSERT INTO products (
   3,
   'Kinetic Rings',
   'SS-KN-RING',
-  'Vòng ánh sáng pixel đường kính 1.2m–1.8m trang bị 3 tời servo độc lập, cho phép vừa nâng hạ vừa xoay nghiêng đa trục 360 độ.',
+  'Vòng ánh sáng pixel đường kính 1.2m trang bị 3 motor servo độc lập, cho phép vừa nâng hạ vừa xoay nghiêng đa trục 360 độ.',
   JSON_OBJECT(
     'variant', 'Rings (Double Axis 1.2m)',
     'dimensions', 'Đường kính 1.200 mm · Nhôm 6061',
@@ -295,11 +301,11 @@ INSERT INTO products (
   3,
   'Kinetic Metal spheres',
   'SS-KN-METL',
-  'Quả cầu kim loại gương phản chiếu ánh sáng Moving Head & Laser không cần phát sáng trực tiếp, tạo không gian kiến trúc sang trọng.',
+  'Quả cầu kim loại gương phản chiếu ánh sáng Moving Head & Laser tạo không gian kiến trúc sang trọng cho showroom và concert.',
   JSON_OBJECT(
     'variant', 'Metal spheres (Mirror)',
     'dimensions', 'Đường kính cầu 220mm / 300mm',
-    'cable_travel_or_power', 'Hành trình cáp 8m – 12m · Cáp thép tải trọng cao',
+    'cable_travel_or_power', 'Hành trình cáp 8m – 12m · Cáp thép chịu tải',
     'speed', '0.1 – 1.1 m/s · Servo tốc độ biến thiên',
     'control_protocol', 'Art-Net / DMX512 / GrandMA3',
     'voltage', 'AC 100–240V, 85W',
@@ -329,7 +335,7 @@ INSERT INTO projects (
   'SECC Quận 7, TP. Hồ Chí Minh',
   '2026-09-12',
   'Kinetic Rings · Kinetic Metal spheres · 20-pixel LED Matrix',
-  'Hệ thống vòng Kinetic đa trục chuyển động mượt mà phía trên khu trưng bày xe concept suốt 10 giờ/ngày.',
+  'Hệ thống vòng Kinetic đa trục chuyển động mượt mà phía trên khu trưng bày xe concept suốt 10 giờ mỗi ngày.',
   '/assets/squaresnake/kinetic-rings.jpg'
 ),
 (
@@ -352,7 +358,7 @@ INSERT INTO contacts (
   'Apex Event Production',
   '2026-12-24',
   'Kinetic Balls, 30W Laser',
-  'Sân khấu 28m x 14m x 12m (trong nhà). Cần khoảng 48 quả Kinetic Balls và 4 máy Laser 30W.',
+  'Sân khấu 28m × 14m × 12m (trong nhà). Cần khoảng 48 quả Kinetic Balls và 4 máy Laser 30W.',
   'quoted'
 ),
 (
@@ -362,6 +368,6 @@ INSERT INTO contacts (
   'Skylight Creative Agency',
   '2026-12-31',
   'Kinetic Rings, 60-pixel LED Matrix',
-  'Quảng trường ngoài trời 36m x 18m x 15m. Cần báo giá 8 vòng Kinetic Rings và 24 panel 60-pixel LED Matrix.',
+  'Quảng trường ngoài trời 36m × 18m × 15m. Cần báo giá 8 vòng Kinetic Rings và 24 panel 60-pixel LED Matrix.',
   'pending'
 );

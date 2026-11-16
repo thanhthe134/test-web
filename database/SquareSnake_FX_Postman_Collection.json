@@ -2,7 +2,7 @@
   "info": {
     "name": "SquareSnake FX Vietnam — MySQL REST API",
     "_postman_id": "a6f7f9e2-4f92-4e7b-9d12-89a314002026",
-    "description": "Bộ API Postman test trực tiếp kết nối MySQL (Bảng categories, products, projects, media_assets, site_settings, customer_inbox) trên máy local http://localhost:3000.",
+    "description": "Bộ API Postman test trực tiếp kết nối MySQL duy nhất squaresnake_fx (4 bảng: categories, products, projects, contacts) trên cổng 3000 hoặc 5000.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
