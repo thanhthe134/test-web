@@ -3,14 +3,18 @@ const router = express.Router();
 const { pool } = require('../config/db');
 
 // GET /api/products/categories - Lấy danh sách nhóm thiết bị
-router.get('/categories', async (req, res) => {
+router.get('/categories', async (_req, res) => {
   try {
     const [rows] = await pool.query(
       'SELECT category_id, category_name, slug, description, created_at FROM categories ORDER BY category_id ASC'
     );
-    res.json({ success: true, data: rows });
+    res.json({ success: true, count: rows.length, data: rows });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Lỗi truy vấn danh mục thiết bị.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi truy vấn danh mục thiết bị.',
+      error: error.message,
+    });
   }
 });
 
@@ -41,7 +45,7 @@ router.get('/', async (req, res) => {
       params.push(keyword, keyword, keyword);
     }
 
-    sql += ' ORDER BY p.is_featured DESC, p.product_id ASC';
+    sql += ' ORDER BY p.category_id ASC, p.is_featured DESC, p.product_id ASC';
 
     const [rows] = await pool.query(sql, params);
     const formatted = rows.map((row) => ({
@@ -54,7 +58,11 @@ router.get('/', async (req, res) => {
 
     res.json({ success: true, count: formatted.length, data: formatted });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Lỗi truy vấn danh sách thiết bị.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi truy vấn danh sách thiết bị.',
+      error: error.message,
+    });
   }
 });
 
@@ -80,11 +88,15 @@ router.get('/:id', async (req, res) => {
 
     res.json({ success: true, data: product });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Lỗi truy vấn chi tiết thiết bị.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi truy vấn chi tiết thiết bị.',
+      error: error.message,
+    });
   }
 });
 
-// POST /api/products - Thêm mới thiết bị (Trang Admin)
+// POST /api/products - Thêm mới thiết bị (Admin)
 router.post('/', async (req, res) => {
   try {
     const {
@@ -135,7 +147,70 @@ router.post('/', async (req, res) => {
       product_id: result.insertId,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Không thể thêm thiết bị.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Không thể thêm thiết bị.',
+      error: error.message,
+    });
+  }
+});
+
+// PUT /api/products/:id - Cập nhật thông tin thiết bị (Admin)
+router.put('/:id', async (req, res) => {
+  try {
+    const {
+      category_id,
+      product_name,
+      short_description,
+      technical_specs,
+      image_url,
+      video_demo_url,
+      is_featured,
+      status,
+    } = req.body;
+
+    const [existingRows] = await pool.query(
+      'SELECT * FROM products WHERE product_id = ?',
+      [req.params.id]
+    );
+    if (existingRows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy thiết bị.' });
+    }
+    const cur = existingRows[0];
+    const specsJson = technical_specs
+      ? typeof technical_specs === 'string'
+        ? technical_specs
+        : JSON.stringify(technical_specs)
+      : typeof cur.technical_specs === 'string'
+      ? cur.technical_specs
+      : JSON.stringify(cur.technical_specs);
+
+    await pool.query(
+      `UPDATE products SET
+        category_id = ?, product_name = ?, short_description = ?,
+        technical_specs = ?, image_url = ?, video_demo_url = ?,
+        is_featured = ?, status = ?
+       WHERE product_id = ?`,
+      [
+        category_id ?? cur.category_id,
+        product_name ?? cur.product_name,
+        short_description ?? cur.short_description,
+        specsJson,
+        image_url ?? cur.image_url,
+        video_demo_url ?? cur.video_demo_url,
+        is_featured !== undefined ? Boolean(is_featured) : cur.is_featured,
+        status ?? cur.status,
+        req.params.id,
+      ]
+    );
+
+    res.json({ success: true, message: 'Đã cập nhật thông tin thiết bị.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Không thể cập nhật thiết bị.',
+      error: error.message,
+    });
   }
 });
 
@@ -158,7 +233,28 @@ router.patch('/:id/status', async (req, res) => {
 
     res.json({ success: true, message: 'Đã cập nhật trạng thái thiết bị.' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Lỗi cập nhật trạng thái.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi cập nhật trạng thái.',
+      error: error.message,
+    });
+  }
+});
+
+// DELETE /api/products/:id - Xóa thiết bị (Admin)
+router.delete('/:id', async (req, res) => {
+  try {
+    const [result] = await pool.query('DELETE FROM products WHERE product_id = ?', [req.params.id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy thiết bị.' });
+    }
+    res.json({ success: true, message: 'Đã xóa thiết bị khỏi cơ sở dữ liệu.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Không thể xóa thiết bị.',
+      error: error.message,
+    });
   }
 });
 

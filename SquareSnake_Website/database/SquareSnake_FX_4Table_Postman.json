@@ -1,0 +1,70 @@
+{
+  "info": {
+    "name": "SquareSnake FX Vietnam — 4-Table MySQL API (XAMPP / Express 4.x)",
+    "_postman_id": "c3b8e9a1-2026-4c4e-9b14-squaresnake4t",
+    "description": "Bộ Postman Collection kiểm thử RESTful API JSON cho 4 bảng MySQL (categories, products, projects, contacts) trên XAMPP + Node.js v20 / Express 4.x (port 5000).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check Server & MySQL",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/health" }
+    },
+    {
+      "name": "2. GET Categories (categories)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products/categories" }
+    },
+    {
+      "name": "3. GET All Products (products)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products" }
+    },
+    {
+      "name": "4. GET Products Filtered by Category & Search",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/products?category=laser&search=30W" }
+    },
+    {
+      "name": "5. POST Create Product (products)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category_id\": 2,\n  \"product_name\": \"80W Outdoor Laser\",\n  \"model_code\": \"SS-LS80\",\n  \"short_description\": \"Máy Laser ngoài trời công suất cực đại 80W IP65.\",\n  \"image_url\": \"/assets/squaresnake/laser.jpg\",\n  \"technical_specs\": {\n    \"variant\": \"80W Pure Diode\",\n    \"dimensions\": \"650 x 420 x 320 mm\",\n    \"cable_travel_or_power\": \"80.000 mW RGB\",\n    \"speed\": \"45Kpps @ 8°\",\n    \"control_protocol\": \"Pangolin FB4 / Art-Net\",\n    \"voltage\": \"AC 100-240V\",\n    \"weight\": \"46 kg\"\n  },\n  \"is_featured\": true,\n  \"status\": \"available\"\n}"
+        },
+        "url": "{{baseUrl}}/api/products"
+      }
+    },
+    {
+      "name": "6. GET All Projects (projects)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/projects" }
+    },
+    {
+      "name": "7. POST Create Contact Quote (contacts)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_name\": \"Nguyễn Minh Tuấn\",\n  \"phone\": \"0905123456\",\n  \"email\": \"tuan@eventpro.vn\",\n  \"company_agency\": \"EventPro Vietnam\",\n  \"event_date\": \"2026-12-20\",\n  \"interested_categories\": [\"Laser 40W\", \"Kinetic Rings\"],\n  \"stage_requirements\": \"Sân khấu ngoài trời 30m x 15m, cần 6 vòng Kinetic Rings và 4 máy Laser 40W.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/contacts"
+      }
+    },
+    {
+      "name": "8. GET All Contacts Inbox (contacts)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/contacts" }
+    },
+    {
+      "name": "9. PATCH Update Contact Status (contacts)",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"status\": \"quoted\"\n}" },
+        "url": "{{baseUrl}}/api/contacts/2/status"
+      }
+    }
+  ]
+}

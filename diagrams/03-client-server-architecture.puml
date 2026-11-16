@@ -1,0 +1,70 @@
+@startuml SquareSnake_ClientServer
+skinparam backgroundColor #0B0B0D
+skinparam defaultFontName "Plus Jakarta Sans"
+skinparam defaultFontColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam package {
+  BackgroundColor #111114
+  BorderColor #E5C148
+  FontColor #E5C148
+}
+skinparam component {
+  BackgroundColor #141417
+  BorderColor #242429
+  FontColor #FFFFFF
+}
+skinparam database {
+  BackgroundColor #141417
+  BorderColor #E5C148
+  FontColor #FFFFFF
+}
+skinparam arrow {
+  Color #E5C148
+  FontColor #9E9EA7
+}
+
+package "Presentation Layer (Client - Browser)" {
+  [HTML5 / CSS3 / Bootstrap 5\nFigma Obsidian & Gold UI] as UI
+  [JavaScript ES6+\nFetch API & State Router] as JS
+  [Trang Quản Trị Admin CMS\n(admin.html / js/admin.js)] as AdminUI
+  UI -down-> JS
+  AdminUI -down-> JS
+}
+
+package "Business Logic Layer (Node.js v20.x / Express 4.x)" {
+  [Express RESTful API Server\n(CORS, JSON Middleware)] as Express
+  [/api/products & /categories\n(productRoutes.js)] as ProdAPI
+  [/api/projects\n(projectRoutes.js)] as ProjAPI
+  [/api/contacts\n(contactRoutes.js)] as ContAPI
+  [Static Media & Upload Service\n(/assets, /uploads, /diagrams)] as StaticSvc
+  Express --> ProdAPI
+  Express --> ProjAPI
+  Express --> ContAPI
+  Express --> StaticSvc
+}
+
+package "Data Layer (XAMPP Local Server)" {
+  database "MySQL (phpMyAdmin)\nDatabase: squaresnake_db" {
+    [categories]
+    [products]
+    [projects]
+    [contacts]
+  }
+  folder "Local File Storage" {
+    [Ảnh & Video sân khấu\n(/assets/squaresnake, /uploads)] as Files
+  }
+}
+
+package "Testing & Source Control" {
+  [Postman\n(JSON API Testing)] as Postman
+  [VS Code & GitHub] as DevOps
+}
+
+JS --> Express : HTTP/HTTPS + JSON\n(GET, POST, PATCH, PUT, DELETE)
+Postman --> Express : REST JSON Requests
+ProdAPI --> [products] : mysql2/promise Pool
+ProdAPI --> [categories] : JOIN category_id
+ProjAPI --> [projects] : SQL Query
+ContAPI --> [contacts] : INSERT / UPDATE status
+StaticSvc --> Files : Serve Images & Videos
+@enduml

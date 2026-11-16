@@ -1,0 +1,646 @@
+{
+  "categories": [
+    {
+      "category_id": 1,
+      "category_name": "LED Matrix",
+      "slug": "led-matrix",
+      "description": "Hệ thống ma trận điểm ảnh LED lập trình 3D."
+    },
+    {
+      "category_id": 2,
+      "category_name": "Laser",
+      "slug": "laser",
+      "description": "Hệ thống Laser trình diễn công suất cao RGB."
+    },
+    {
+      "category_id": 3,
+      "category_name": "Kinetic",
+      "slug": "kinetic",
+      "description": "Hệ thống tời nâng hạ ánh sáng Kinetic đa trục."
+    }
+  ],
+  "contacts": [
+    {
+      "contact_id": 1,
+      "reference_code": "SS-BG-1001",
+      "customer_name": "Trần Hoàng Nam",
+      "phone": "nam.tran@apexevent.vn · 0912345678",
+      "company_agency": "Apex Event Production",
+      "event_date": "2026-12-24",
+      "interested_categories": [
+        "Kinetic Balls",
+        "30W Laser"
+      ],
+      "stage_requirements": "Sân khấu 28m × 14m × 12m (trong nhà). Cần khoảng 48 quả Kinetic Balls và 4 máy Laser 30W.",
+      "status": "quoted",
+      "admin_note": "Đã gửi báo giá sơ bộ qua email ngày 12/11.",
+      "created_at": "2026-11-10T09:30:00.000Z"
+    },
+    {
+      "contact_id": 2,
+      "reference_code": "SS-BG-1002",
+      "customer_name": "Lê Thảo Vy",
+      "phone": "vy.le@skylight.vn · 0987654321",
+      "company_agency": "Skylight Creative Agency",
+      "event_date": "2026-12-31",
+      "interested_categories": [
+        "Kinetic Rings",
+        "60-pixel LED Matrix"
+      ],
+      "stage_requirements": "Quảng trường ngoài trời 36m × 18m × 15m. Cần báo giá 8 vòng Kinetic Rings và 24 panel 60-pixel LED Matrix.",
+      "status": "pending",
+      "admin_note": "",
+      "created_at": "2026-11-14T15:10:00.000Z"
+    }
+  ],
+  "siteSettings": {
+    "companyName": "CÔNG TY TNHH SQUARESNAKE FX VIỆT NAM",
+    "heroKicker": "LIGHT. MOTION. IMPACT.",
+    "heroTitleLine1": "Built for the",
+    "heroTitleLine2": "unforgettable.",
+    "heroDescription": "LED Matrix, laser and kinetic systems.\nExtraordinary possibilities for your next show.",
+    "heroImageUrl": "/assets/squaresnake/hero-concert.jpg",
+    "heroVideoUrl": "",
+    "aboutKicker": "VỀ SQUARESNAKE FX VIỆT NAM",
+    "aboutTitleLine1": "Kỹ thuật chính xác.",
+    "aboutTitleLine2": "Hiệu ứng đỉnh cao.",
+    "aboutDescription": "Công ty TNHH SquareSnake FX Việt Nam chuyên cung cấp, cho thuê và trực tiếp lập trình vận hành các hệ thống LED Matrix, Laser công suất lớn và cơ khí Kinetic cho concert, triển lãm và sự kiện quy mô lớn tại Hà Nội, TP.HCM và toàn quốc.",
+    "aboutImageUrl": "/assets/squaresnake/hero-concert.jpg",
+    "footerDescription": "Sự cam kết không ngừng nghỉ của chúng tôi trong việc thúc đẩy công nghệ ánh sáng sân khấu Kinetic, Laser và LED Matrix đã mang lại danh tiếng vững chắc trong ngành tổ chức sự kiện.",
+    "phone": "+84 909 886 247",
+    "zalo": "+84 909 886 247",
+    "email": "baogia@squaresnake.vn",
+    "address": "Lô B4-12 Khu công nghiệp Thạch Bàn, Quận Long Biên, Hà Nội & 88 Nguyễn Văn Linh, Quận 7, TP.HCM."
+  },
+  "catalogModels": [
+    {
+      "id": "led-matrix-20-pixel",
+      "collection": "led-matrix",
+      "collectionName": "LED Matrix",
+      "kicker": "LED MATRIX / 20-PIXEL",
+      "shortLabel": "20-pixel",
+      "titleLine1": "20-pixel",
+      "titleLine2": "LED Matrix",
+      "fullName": "20-pixel LED Matrix",
+      "cardTag": "Discover the 20-pixel format for your next design.",
+      "heroSummary": "Build your pixel lighting concept around the 20-pixel LED Matrix variant.",
+      "imageUrl": "/assets/squaresnake/led-matrix.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Variant",
+          "value": "20-pixel"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Power requirements",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Control protocol",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Mounting / rigging",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Certification / safety",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Only the variant is supplied. All other technical details need verification before publication.",
+      "applicationsLead": "Pixel chases. Wave forms. Graphic textures.",
+      "applicationsBody": "Explore how pixel-based lighting could shape a stage, installation or live performance.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "led-matrix-60-pixel",
+      "collection": "led-matrix",
+      "collectionName": "LED Matrix",
+      "kicker": "LED MATRIX / 60-PIXEL",
+      "shortLabel": "60-pixel",
+      "titleLine1": "60-pixel",
+      "titleLine2": "LED Matrix",
+      "fullName": "60-pixel LED Matrix",
+      "cardTag": "Explore the 60-pixel format and creative possibilities.",
+      "heroSummary": "Build your pixel lighting concept around the 60-pixel LED Matrix variant.",
+      "imageUrl": "/assets/squaresnake/led-matrix.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Variant",
+          "value": "60-pixel"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Power requirements",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Control protocol",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Mounting / rigging",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Certification / safety",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Only the variant is supplied. All other technical details need verification before publication.",
+      "applicationsLead": "Pixel chases. Wave forms. Graphic textures.",
+      "applicationsBody": "Explore how pixel-based lighting could shape a stage, installation or live performance.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "laser-20w",
+      "collection": "laser",
+      "collectionName": "Laser",
+      "kicker": "LASER / 20W",
+      "shortLabel": "20W",
+      "titleLine1": "20W",
+      "titleLine2": "Laser",
+      "fullName": "20W Laser",
+      "cardTag": "Laser system / 20W",
+      "heroSummary": "Explore the 20W laser option for your next production. Ask for a verified system datasheet.",
+      "imageUrl": "/assets/squaresnake/laser.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Power option",
+          "value": "20W"
+        },
+        {
+          "label": "Wavelengths / colour",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Scan system / scan angle",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Control protocol",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Laser safety / certification",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Power options are supplied; output ratings and full specifications require manufacturer verification.",
+      "applicationsLead": "Beam fans. Aerial patterns. Show moments.",
+      "applicationsBody": "Imagine the visual possibilities for a live show or installation. Final selection requires venue planning and a professional laser safety assessment.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "laser-30w",
+      "collection": "laser",
+      "collectionName": "Laser",
+      "kicker": "LASER / 30W",
+      "shortLabel": "30W",
+      "titleLine1": "30W",
+      "titleLine2": "Laser",
+      "fullName": "30W Laser",
+      "cardTag": "Laser system / 30W",
+      "heroSummary": "Explore the 30W laser option for your next production. Ask for a verified system datasheet.",
+      "imageUrl": "/assets/squaresnake/laser.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Power option",
+          "value": "30W"
+        },
+        {
+          "label": "Wavelengths / colour",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Scan system / scan angle",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Control protocol",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Laser safety / certification",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Power options are supplied; output ratings and full specifications require manufacturer verification.",
+      "applicationsLead": "Beam fans. Aerial patterns. Show moments.",
+      "applicationsBody": "Imagine the visual possibilities for a live show or installation. Final selection requires venue planning and a professional laser safety assessment.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "laser-40w",
+      "collection": "laser",
+      "collectionName": "Laser",
+      "kicker": "LASER / 40W",
+      "shortLabel": "40W",
+      "titleLine1": "40W",
+      "titleLine2": "Laser",
+      "fullName": "40W Laser",
+      "cardTag": "Laser system / 40W",
+      "heroSummary": "Explore the 40W laser option for your next production. Ask for a verified system datasheet.",
+      "imageUrl": "/assets/squaresnake/laser.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Power option",
+          "value": "40W"
+        },
+        {
+          "label": "Wavelengths / colour",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Scan system / scan angle",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Control protocol",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Laser safety / certification",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Power options are supplied; output ratings and full specifications require manufacturer verification.",
+      "applicationsLead": "Beam fans. Aerial patterns. Show moments.",
+      "applicationsBody": "Imagine the visual possibilities for a live show or installation. Final selection requires venue planning and a professional laser safety assessment.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "laser-60w",
+      "collection": "laser",
+      "collectionName": "Laser",
+      "kicker": "LASER / 60W",
+      "shortLabel": "60W",
+      "titleLine1": "60W",
+      "titleLine2": "Laser",
+      "fullName": "60W Laser",
+      "cardTag": "Laser system / 60W",
+      "heroSummary": "Explore the 60W laser option for your next production. Ask for a verified system datasheet.",
+      "imageUrl": "/assets/squaresnake/laser.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Power option",
+          "value": "60W"
+        },
+        {
+          "label": "Wavelengths / colour",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Scan system / scan angle",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Control protocol",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Laser safety / certification",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Power options are supplied; output ratings and full specifications require manufacturer verification.",
+      "applicationsLead": "Beam fans. Aerial patterns. Show moments.",
+      "applicationsBody": "Imagine the visual possibilities for a live show or installation. Final selection requires venue planning and a professional laser safety assessment.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "kinetic-balls",
+      "collection": "kinetic",
+      "collectionName": "Kinetic",
+      "kicker": "KINETIC / BALLS",
+      "shortLabel": "Balls",
+      "titleLine1": "Kinetic",
+      "titleLine2": "Balls",
+      "fullName": "Kinetic Balls",
+      "cardTag": "Kinetic / Balls",
+      "heroSummary": "Explore balls as part of a suspended kinetic installation designed around your space.",
+      "imageUrl": "/assets/squaresnake/kinetic-balls.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Form",
+          "value": "Balls"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Power requirements",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Motion / control",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Travel / speed",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Certification / safety",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Shapes are supplied. Dimensions, motion, load ratings and safety details need manufacturer verification.",
+      "applicationsLead": "Sculptural forms. Choreographed movement.",
+      "applicationsBody": "Imagine a moving installation built around balls. Discuss layout, suspension and the visual rhythm of your space.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "kinetic-rings",
+      "collection": "kinetic",
+      "collectionName": "Kinetic",
+      "kicker": "KINETIC / RINGS",
+      "shortLabel": "Rings",
+      "titleLine1": "Kinetic",
+      "titleLine2": "Rings",
+      "fullName": "Kinetic Rings",
+      "cardTag": "Kinetic / Rings",
+      "heroSummary": "Explore rings as part of a suspended kinetic installation designed around your space.",
+      "imageUrl": "/assets/squaresnake/kinetic-rings.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Form",
+          "value": "Rings"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Power requirements",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Motion / control",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Travel / speed",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Certification / safety",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Shapes are supplied. Dimensions, motion, load ratings and safety details need manufacturer verification.",
+      "applicationsLead": "Sculptural forms. Choreographed movement.",
+      "applicationsBody": "Imagine a moving installation built around rings. Discuss layout, suspension and the visual rhythm of your space.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "kinetic-lanterns",
+      "collection": "kinetic",
+      "collectionName": "Kinetic",
+      "kicker": "KINETIC / LANTERNS",
+      "shortLabel": "Lanterns",
+      "titleLine1": "Kinetic",
+      "titleLine2": "Lanterns",
+      "fullName": "Kinetic Lanterns",
+      "cardTag": "Kinetic / Lanterns",
+      "heroSummary": "Explore lanterns as part of a suspended kinetic installation designed around your space.",
+      "imageUrl": "/assets/squaresnake/kinetic-lanterns.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Form",
+          "value": "Lanterns"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Power requirements",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Motion / control",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Travel / speed",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Certification / safety",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Shapes are supplied. Dimensions, motion, load ratings and safety details need manufacturer verification.",
+      "applicationsLead": "Sculptural forms. Choreographed movement.",
+      "applicationsBody": "Imagine a moving installation built around lanterns. Discuss layout, suspension and the visual rhythm of your space.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "kinetic-milk-drop",
+      "collection": "kinetic",
+      "collectionName": "Kinetic",
+      "kicker": "KINETIC / MILK-DROP",
+      "shortLabel": "Milk-drop",
+      "titleLine1": "Kinetic",
+      "titleLine2": "Milk-drop",
+      "fullName": "Kinetic Milk-drop",
+      "cardTag": "Kinetic / Milk-drop",
+      "heroSummary": "Explore milk-drop as part of a suspended kinetic installation designed around your space.",
+      "imageUrl": "/assets/squaresnake/kinetic-milk-drop.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Form",
+          "value": "Milk-drop"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Power requirements",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Motion / control",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Travel / speed",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Certification / safety",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Shapes are supplied. Dimensions, motion, load ratings and safety details need manufacturer verification.",
+      "applicationsLead": "Sculptural forms. Choreographed movement.",
+      "applicationsBody": "Imagine a moving installation built around milk-drop. Discuss layout, suspension and the visual rhythm of your space.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    },
+    {
+      "id": "kinetic-metal-spheres",
+      "collection": "kinetic",
+      "collectionName": "Kinetic",
+      "kicker": "KINETIC / METAL SPHERES",
+      "shortLabel": "Metal spheres",
+      "titleLine1": "Kinetic",
+      "titleLine2": "Metal spheres",
+      "fullName": "Kinetic Metal spheres",
+      "cardTag": "Kinetic / Metal spheres",
+      "heroSummary": "Explore metal spheres as part of a suspended kinetic installation designed around your space.",
+      "imageUrl": "/assets/squaresnake/kinetic-metal-spheres.jpg",
+      "videoUrl": "",
+      "galleryImages": [],
+      "specs": [
+        {
+          "label": "Form",
+          "value": "Metal spheres"
+        },
+        {
+          "label": "Dimensions / weight",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Power requirements",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Motion / control",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Travel / speed",
+          "value": "To be confirmed"
+        },
+        {
+          "label": "Certification / safety",
+          "value": "To be confirmed"
+        }
+      ],
+      "specsFootnote": "Shapes are supplied. Dimensions, motion, load ratings and safety details need manufacturer verification.",
+      "applicationsLead": "Sculptural forms. Choreographed movement.",
+      "applicationsBody": "Imagine a moving installation built around metal spheres. Discuss layout, suspension and the visual rhythm of your space.",
+      "applicationsFootnote": "Illustrative concept. Verified show references and model-specific media to be supplied."
+    }
+  ],
+  "cmsProjects": [
+    {
+      "id": "case-song-dem",
+      "num": "01 / MUSIC FESTIVAL",
+      "title": "Đại Nhạc Hội Sóng Đêm — SVĐ Mỹ Đình",
+      "detail": "Laser 60W & 40W · Kinetic Balls · Timecode GrandMA3",
+      "summary": "Triển khai đồng bộ hệ thống tia Laser công suất lớn ngoài trời kết hợp ma trận Kinetic trên giàn truss chính cho 35.000 khán giả.",
+      "imageUrl": "/assets/squaresnake/laser.jpg",
+      "videoUrl": "",
+      "slug": "laser"
+    },
+    {
+      "id": "case-secc-auto",
+      "num": "02 / AUTO EXHIBITION",
+      "title": "Triển Lãm Ô Tô Tương Lai — SECC Quận 7",
+      "detail": "Kinetic Rings · Kinetic Metal spheres",
+      "summary": "Hệ thống vòng Kinetic đa trục chuyển động mượt mà phía trên khu trưng bày xe concept suốt 10 giờ/ngày.",
+      "imageUrl": "/assets/squaresnake/kinetic-rings.jpg",
+      "videoUrl": "",
+      "slug": "kinetic"
+    },
+    {
+      "id": "case-countdown-hcm",
+      "num": "03 / LIVE STAGE & TV",
+      "title": "Countdown Gala — Phố Đi Bộ Nguyễn Huệ",
+      "detail": "60-pixel LED Matrix · Laser 30W",
+      "summary": "Tổ hợp bức tường LED Matrix hiệu ứng sóng pixel 3D không nhấp nháy trên camera truyền hình trực tiếp.",
+      "imageUrl": "/assets/squaresnake/led-matrix.jpg",
+      "videoUrl": "",
+      "slug": "led-matrix"
+    }
+  ],
+  "media": [
+    {
+      "id": "media-hero-concert",
+      "title": "Concert Stage Concept",
+      "type": "image",
+      "url": "/assets/squaresnake/hero-concert.jpg",
+      "category": "Sân khấu chính",
+      "createdAt": "2026-11-10T08:00:00.000Z"
+    },
+    {
+      "id": "media-led-matrix",
+      "title": "LED Matrix Wave Array",
+      "type": "image",
+      "url": "/assets/squaresnake/led-matrix.jpg",
+      "category": "LED Matrix",
+      "createdAt": "2026-11-10T08:05:00.000Z"
+    },
+    {
+      "id": "media-laser-beams",
+      "title": "Laser Fan Array",
+      "type": "image",
+      "url": "/assets/squaresnake/laser.jpg",
+      "category": "Laser",
+      "createdAt": "2026-11-10T08:10:00.000Z"
+    },
+    {
+      "id": "media-kinetic-balls",
+      "title": "Kinetic Balls Array",
+      "type": "image",
+      "url": "/assets/squaresnake/kinetic-balls.jpg",
+      "category": "Kinetic",
+      "createdAt": "2026-11-10T08:15:00.000Z"
+    },
+    {
+      "id": "media-kinetic-rings",
+      "title": "Kinetic Double Axis Rings",
+      "type": "image",
+      "url": "/assets/squaresnake/kinetic-rings.jpg",
+      "category": "Kinetic",
+      "createdAt": "2026-11-10T08:20:00.000Z"
+    }
+  ]
+}

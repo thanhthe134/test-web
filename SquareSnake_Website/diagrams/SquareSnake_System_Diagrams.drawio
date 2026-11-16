@@ -1,0 +1,163 @@
+<mxfile host="app.diagrams.net" modified="2026-11-16T16:25:00.000Z" agent="SquareSnake-Architect" version="24.7.17" type="device">
+  <diagram id="page-usecase" name="1. Use Case">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#0B0B0D">
+      <root>
+        <mxCell id="uc-0"/>
+        <mxCell id="uc-1" parent="uc-0"/>
+        <mxCell id="uc-boundary" value="HỆ THỐNG WEBSITE SHOWROOM SQUARESNAKE FX VIỆT NAM" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#111114;strokeColor=#242429;fontColor=#E5C148;fontStyle=1;fontSize=13;spacingTop=10;" vertex="1" parent="uc-1">
+          <mxGeometry x="260" y="60" width="620" height="660" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-actor-cust" value="Khách hàng&#xa;(Event Planner / Agency)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="80" y="210" width="40" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-actor-admin" value="Quản trị viên&#xa;(Admin CMS)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="1000" y="470" width="40" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-01" value="UC01: Xem Trang chủ &amp; Dòng sản phẩm&#xa;(LED Matrix, Laser, Kinetic)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="105" width="320" height="58" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-02" value="UC02: Lọc danh mục &amp; Tìm kiếm thiết bị" style="ellipse;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="180" width="320" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-03" value="UC03: Xem chi tiết Model &amp; Thông số kỹ thuật" style="ellipse;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="250" width="320" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-04" value="UC04: Xem Hồ sơ Dự án &amp; Tài liệu kỹ thuật" style="ellipse;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="322" width="320" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-05" value="UC05: Gửi Yêu cầu Báo giá (Request a quote)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#18181C;strokeColor=#E5C148;fontColor=#E5C148;fontStyle=1;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="394" width="320" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-06" value="UC06: Đăng nhập Quản trị (Admin Login)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="476" width="320" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-07" value="UC07: Quản lý Thiết bị (CRUD) &amp; Media" style="ellipse;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="544" width="320" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-08" value="UC08: Quản lý Dự án &amp; Xử lý Inbox Báo giá" style="ellipse;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="uc-1">
+          <mxGeometry x="380" y="612" width="320" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-c1" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-cust" target="uc-01"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-c2" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-cust" target="uc-02"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-c3" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-cust" target="uc-03"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-c4" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-cust" target="uc-04"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-c5" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-cust" target="uc-05"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-a1" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-admin" target="uc-06"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-a2" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-admin" target="uc-07"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-a3" style="strokeColor=#E5C148;endArrow=none;" edge="1" parent="uc-1" source="uc-actor-admin" target="uc-08"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="page-sitemap" name="2. Sitemap">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1360" pageHeight="827" background="#0B0B0D">
+      <root>
+        <mxCell id="sm-0"/>
+        <mxCell id="sm-1" parent="sm-0"/>
+        <mxCell id="sm-root" value="TRANG CHỦ (HOME)&#xa;SquareSnake FX Việt Nam" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E5C148;strokeColor=#E5C148;fontColor=#0B0B0D;fontStyle=1;fontSize=13;" vertex="1" parent="sm-1">
+          <mxGeometry x="540" y="50" width="260" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-about" value="Về Chúng Tôi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="sm-1">
+          <mxGeometry x="60" y="180" width="160" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-prod" value="Các Sản Phẩm" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#E5C148;fontStyle=1;" vertex="1" parent="sm-1">
+          <mxGeometry x="380" y="180" width="200" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-proj" value="Trường Hợp Dự Án" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="sm-1">
+          <mxGeometry x="680" y="180" width="170" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-info" value="Trung Tâm Thông Tin" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="sm-1">
+          <mxGeometry x="890" y="180" width="180" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-quote" value="Yêu Cầu Báo Giá&#xa;&amp; Quản Trị Admin" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="sm-1">
+          <mxGeometry x="1110" y="180" width="180" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-led" value="01 / LED Matrix&#xa;• 20-pixel LED Matrix&#xa;• 60-pixel LED Matrix" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#D4D4D8;align=left;spacingLeft=12;" vertex="1" parent="sm-1">
+          <mxGeometry x="180" y="290" width="190" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-laser" value="02 / Laser&#xa;• 20W / 30W Laser&#xa;• 40W / 60W Laser" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#D4D4D8;align=left;spacingLeft=12;" vertex="1" parent="sm-1">
+          <mxGeometry x="390" y="290" width="190" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm-kinetic" value="03 / Kinetic&#xa;• Balls &amp; Rings&#xa;• Lanterns / Milk-drop / Metal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#D4D4D8;align=left;spacingLeft=12;" vertex="1" parent="sm-1">
+          <mxGeometry x="600" y="290" width="210" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="se1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-root" target="sm-about"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-root" target="sm-prod"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-root" target="sm-proj"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-root" target="sm-info"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se5" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-root" target="sm-quote"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se6" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-prod" target="sm-led"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se7" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-prod" target="sm-laser"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se8" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;" edge="1" parent="sm-1" source="sm-prod" target="sm-kinetic"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="page-arch" name="3. Client-Server">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#0B0B0D">
+      <root>
+        <mxCell id="ar-0"/>
+        <mxCell id="ar-1" parent="ar-0"/>
+        <mxCell id="ar-tier1" value="PRESENTATION LAYER (CLIENT)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#111114;strokeColor=#E5C148;fontColor=#E5C148;fontStyle=1;spacingTop=8;" vertex="1" parent="ar-1">
+          <mxGeometry x="80" y="60" width="980" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-fe" value="HTML5 · CSS3 · Bootstrap 5 · JS ES6+&#xa;Giao diện Figma Vàng – Đen &amp; Fetch API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#FFFFFF;" vertex="1" parent="ar-1">
+          <mxGeometry x="130" y="110" width="390" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-pm" value="Postman / VS Code / GitHub&#xa;Kiểm thử JSON API &amp; Quản lý mã nguồn" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#FFFFFF;" vertex="1" parent="ar-1">
+          <mxGeometry x="610" y="110" width="390" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-tier2" value="BUSINESS LOGIC LAYER (NODE.JS v20.x &amp; EXPRESS 4.x)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#111114;strokeColor=#E5C148;fontColor=#E5C148;fontStyle=1;spacingTop=8;" vertex="1" parent="ar-1">
+          <mxGeometry x="80" y="270" width="980" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-api1" value="GET / POST / PUT / DELETE&#xa;/api/products &amp; /categories" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#FFFFFF;" vertex="1" parent="ar-1">
+          <mxGeometry x="115" y="330" width="210" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-api2" value="GET / POST / DELETE&#xa;/api/projects" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#FFFFFF;" vertex="1" parent="ar-1">
+          <mxGeometry x="350" y="330" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-api3" value="GET / POST / PATCH / DELETE&#xa;/api/contacts (Báo giá)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#FFFFFF;" vertex="1" parent="ar-1">
+          <mxGeometry x="575" y="330" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-static" value="Static Media Server&#xa;/assets, /uploads, /diagrams" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#FFFFFF;" vertex="1" parent="ar-1">
+          <mxGeometry x="820" y="330" width="210" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-tier3" value="DATA LAYER (XAMPP LOCAL SERVER — MYSQL / PHPMYADMIN)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#111114;strokeColor=#E5C148;fontColor=#E5C148;fontStyle=1;spacingTop=8;" vertex="1" parent="ar-1">
+          <mxGeometry x="80" y="500" width="980" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-db" value="MySQL 8.0 / MariaDB (squaresnake_db)&#xa;4 Bảng: categories · products · projects · contacts" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=14;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="ar-1">
+          <mxGeometry x="180" y="548" width="460" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar-fs" value="Thư mục tệp tĩnh&#xa;(Ảnh &amp; Video sân khấu)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#141417;strokeColor=#242429;fontColor=#FFFFFF;" vertex="1" parent="ar-1">
+          <mxGeometry x="760" y="555" width="260" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="ae1" value="RESTful JSON" style="strokeColor=#E5C148;fontColor=#E5C148;" edge="1" parent="ar-1" source="ar-fe" target="ar-tier2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ae2" value="Postman JSON" style="strokeColor=#E5C148;fontColor=#E5C148;" edge="1" parent="ar-1" source="ar-pm" target="ar-tier2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ae3" value="mysql2 Pool" style="strokeColor=#E5C148;fontColor=#E5C148;" edge="1" parent="ar-1" source="ar-api2" target="ar-db"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ae4" value="File I/O" style="strokeColor=#E5C148;fontColor=#E5C148;" edge="1" parent="ar-1" source="ar-static" target="ar-fs"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="page-erd" name="4. Database ERD">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1260" pageHeight="827" background="#0B0B0D">
+      <root>
+        <mxCell id="er-0"/>
+        <mxCell id="er-1" parent="er-0"/>
+        <mxCell id="tb-cat" value="categories&#xa;──────────────────────&#xa;PK  category_id : INT&#xa;      category_name : VARCHAR(120)&#xa;      slug : VARCHAR(120) UNIQUE&#xa;      description : TEXT&#xa;      created_at : TIMESTAMP" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=12;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="er-1">
+          <mxGeometry x="60" y="90" width="270" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="tb-prod" value="products&#xa;──────────────────────────────&#xa;PK  product_id : INT&#xa;FK  category_id : INT → categories&#xa;      product_name : VARCHAR(180)&#xa;      model_code : VARCHAR(50) UNIQUE&#xa;      short_description : TEXT&#xa;      technical_specs : JSON&#xa;      image_url : VARCHAR(255)&#xa;      video_demo_url : VARCHAR(255)&#xa;      is_featured : BOOLEAN&#xa;      status : ENUM('available','maintenance')&#xa;      created_at : TIMESTAMP" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=12;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="er-1">
+          <mxGeometry x="450" y="60" width="310" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="tb-proj" value="projects&#xa;──────────────────────────────&#xa;PK  project_id : INT&#xa;      event_name : VARCHAR(200)&#xa;      client_name : VARCHAR(160)&#xa;      location : VARCHAR(180)&#xa;      event_date : DATE&#xa;      equipment_used : VARCHAR(255)&#xa;      summary : TEXT&#xa;      thumbnail_url : VARCHAR(255)&#xa;      created_at : TIMESTAMP" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=12;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="er-1">
+          <mxGeometry x="60" y="360" width="310" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="tb-cont" value="contacts&#xa;──────────────────────────────&#xa;PK  contact_id : INT&#xa;      customer_name : VARCHAR(150)&#xa;      phone : VARCHAR(30)&#xa;      email : VARCHAR(150)&#xa;      company_agency : VARCHAR(180)&#xa;      event_date : DATE&#xa;      interested_categories : VARCHAR(255)&#xa;      stage_requirements : TEXT&#xa;      status : ENUM('pending','contacted','quoted')&#xa;      created_at : TIMESTAMP" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=12;fillColor=#141417;strokeColor=#E5C148;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="er-1">
+          <mxGeometry x="450" y="360" width="340" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="er-rel" value="1 : N (category_id)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#E5C148;fontColor=#E5C148;startArrow=ERone;endArrow=ERmany;" edge="1" parent="er-1" source="tb-cat" target="tb-prod"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

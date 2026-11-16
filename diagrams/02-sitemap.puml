@@ -1,0 +1,60 @@
+@startmindmap SquareSnake_Sitemap
+<style>
+mindmapDiagram {
+  BackgroundColor #0B0B0D
+  node {
+    BackgroundColor #141417
+    BorderColor #242429
+    FontColor #FFFFFF
+    RoundCorner 4
+  }
+  rootNode {
+    BackgroundColor #E5C148
+    BorderColor #E5C148
+    FontColor #0B0B0D
+    FontStyle bold
+  }
+  :depth(1) {
+    BackgroundColor #18181C
+    BorderColor #E5C148
+    FontColor #E5C148
+    FontStyle bold
+  }
+}
+</style>
+
+* SquareSnake FX Việt Nam\n(Trang Chủ - Home)
+** Về Chúng Tôi (/about)
+*** Năng lực & Kho thiết bị HN - TP.HCM
+*** Đội ngũ kỹ sư Timecode 24/7
+** Các Sản Phẩm (/products)
+*** LED Matrix (/led-matrix)
+**** 20-pixel LED Matrix
+**** 60-pixel LED Matrix
+*** Laser (/laser)
+**** 20W Laser
+**** 30W Laser
+**** 40W Laser
+**** 60W Laser
+*** Kinetic (/kinetic)
+**** Kinetic Balls
+**** Kinetic Rings
+**** Kinetic Lanterns
+**** Kinetic Milk-drop
+**** Kinetic Metal spheres
+** Trường Hợp Dự Án (/projects)
+*** Đại Nhạc Hội Sóng Đêm (Mỹ Đình)
+*** Triển Lãm Ô Tô Tương Lai (SECC)
+*** Countdown Gala Nguyễn Huệ
+** Trung Tâm Thông Tin (/info)
+*** Chuẩn DMX512 / Art-Net / Pangolin FB4
+*** Tiêu chuẩn Truss & An toàn Laser
+*** Thư viện Media & Sơ đồ Hệ thống
+** Yêu Cầu Báo Giá (/quote)
+*** Biểu mẫu chọn thiết bị & thông số sân khấu
+*** Lưu CSDL & cấp mã tham chiếu SS-BG-XXXX
+** Quản Trị Hệ Thống (/admin.html)
+*** Inbox Yêu cầu báo giá (contacts)
+*** CRUD Thiết bị & Media (products)
+*** Quản lý Hồ sơ Dự án (projects)
+@endmindmap

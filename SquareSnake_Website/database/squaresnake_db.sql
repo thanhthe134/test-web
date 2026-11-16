@@ -1,6 +1,7 @@
 -- =============================================================================
--- CƠ SỞ DỮ LIỆU: SQUARESNAKE VIỆT NAM (STAGE EFFECTS & EVENT EQUIPMENT)
--- Tương thích: MySQL 8.0+ / MariaDB 10.4+ (phpMyAdmin / XAMPP)
+-- CƠ SỞ DỮ LIỆU: SQUARESNAKE FX VIỆT NAM (STAGE EFFECTS & EVENT EQUIPMENT)
+-- Tương thích: MySQL 8.0+ / MariaDB 10.4+ (phpMyAdmin / XAMPP Local Server)
+-- 4 Bảng dữ liệu lõi: categories, products, projects, contacts
 -- =============================================================================
 CREATE DATABASE IF NOT EXISTS squaresnake_db
   CHARACTER SET utf8mb4
@@ -13,6 +14,7 @@ DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
+
 -- -----------------------------------------------------------------------------
 -- 1. Bảng categories: Danh mục nhóm thiết bị hiệu ứng sân khấu
 -- -----------------------------------------------------------------------------
@@ -25,7 +27,7 @@ CREATE TABLE categories (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
--- 2. Bảng products: Chi tiết thiết bị hiệu ứng sự kiện
+-- 2. Bảng products: Chi tiết thiết bị hiệu ứng sự kiện (LED Matrix, Laser, Kinetic)
 -- -----------------------------------------------------------------------------
 CREATE TABLE products (
   product_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -69,7 +71,7 @@ CREATE TABLE projects (
 CREATE TABLE contacts (
   contact_id INT AUTO_INCREMENT PRIMARY KEY,
   customer_name VARCHAR(150) NOT NULL,
-  phone VARCHAR(30) NOT NULL,
+  phone VARCHAR(60) NOT NULL,
   email VARCHAR(150),
   company_agency VARCHAR(180),
   event_date DATE,
@@ -82,159 +84,229 @@ CREATE TABLE contacts (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
--- DỮ LIỆU MẪU THỰC TẾ (SEED DATA)
+-- DỮ LIỆU MẪU THỰC TẾ (SEED DATA - 11 MODELS FIGMA + DỰ ÁN + BÁO GIÁ)
 -- =============================================================================
 
 INSERT INTO categories (category_id, category_name, slug, description) VALUES
-(1, 'Hệ thống Kinetic', 'kinetic', 'Hệ thống bóng LED và vòng ánh sáng nâng hạ cơ khí chính xác theo chuẩn DMX512, Art-Net và Madrix.'),
-(2, 'Ánh sáng Laser', 'laser', 'Hệ thống trình diễn Laser Full-Color RGB công suất lớn 15W–30W IP65 điều khiển qua mạng Pangolin FB4.'),
-(3, 'Màn hình LED Matrix', 'led-matrix', 'Hệ thống ma trận điểm ảnh LED COB công suất cao, ghép nối modular không viền cho concert và lễ hội.');
+(1, 'LED Matrix', 'led-matrix', 'Hệ thống ma trận điểm ảnh LED lập trình pixel (20-pixel, 60-pixel), ghép nối modular cho concert và lễ hội.'),
+(2, 'Laser', 'laser', 'Hệ thống trình diễn Laser công suất thực 20W, 30W, 40W, 60W Pure Diode RGB điều khiển qua Pangolin FB4.'),
+(3, 'Kinetic', 'kinetic', 'Hệ thống cơ khí nâng hạ nghệ thuật 5 hình dáng: Balls, Rings, Lanterns, Milk-drop và Metal spheres.');
 
 INSERT INTO products (
   category_id, product_name, model_code, short_description,
   technical_specs, image_url, video_demo_url, is_featured, status
 ) VALUES
+-- LED Matrix (2 models)
 (
   1,
-  'Kinetic Ball RGBW 250mm',
-  'SS-KB250',
-  'Quả cầu LED khuếch tán 360 độ kết hợp tời kéo servo siêu êm 6m–12m, tạo sóng chuyển động không gian đồng bộ âm nhạc.',
+  '20-pixel LED Matrix',
+  'SS-LM20',
+  'Biến thể 20-pixel LED Matrix chuyên tạo hiệu ứng chasing, sóng ánh sáng và ma trận hình học sắc nét.',
   JSON_OBJECT(
-    'dimensions', 'Đường kính bóng 250 mm · Cụm tời 320×210×280 mm',
-    'cable_travel_or_power', 'Hành trình cáp 6m – 12m · LED 18W RGBW',
-    'speed', '0.1 – 1.0 m/s (Gia tốc mượt)',
-    'control_protocol', 'Art-Net / DMX512 (8 CH) / Madrix 3D',
-    'voltage', 'AC 100–240V, 50/60Hz (110W)',
-    'weight', '7.8 kg / bộ'
+    'variant', '20-pixel',
+    'dimensions', '580 × 460 × 140 mm · 11.5 kg',
+    'cable_travel_or_power', '20 × 30W COB Warm White + RGB Halo (640W)',
+    'speed', 'Tần số làm tươi 18.000 Hz · Pixel chase 60fps',
+    'control_protocol', 'DMX512 / Art-Net / sACN / Madrix',
+    'voltage', 'AC 100–240V, 50/60Hz (PowerCON True1)',
+    'weight', '11.5 kg / module'
   ),
-  '/src/assets/images/product_kinetic_ball_1794743189815.jpg',
-  'https://squaresnake.vn/demo/kinetic-ball-250',
+  '/assets/squaresnake/led-matrix.jpg',
+  '',
   TRUE,
   'available'
 ),
 (
   1,
-  'Kinetic Sphere Pro 350mm',
-  'SS-KB350',
-  'Phiên bản bóng Kinetic đường kính lớn 350mm độ sáng cao, tối ưu cho sân vận động và nhà thi đấu trần cao trên 15m.',
+  '60-pixel LED Matrix',
+  'SS-LM60',
+  'Biến thể 60-pixel LED Matrix mật độ điểm ảnh cao cho sân khấu đại nhạc hội và truyền hình trực tiếp.',
   JSON_OBJECT(
-    'dimensions', 'Đường kính bóng 350 mm · Cụm tời 350×230×310 mm',
-    'cable_travel_or_power', 'Hành trình cáp 12m (mở rộng 15m) · LED 32W RGBW',
-    'speed', 'Tối đa 1.2 m/s (Độ ồn < 36dB)',
-    'control_protocol', 'Art-Net / sACN / DMX512 / Madrix',
-    'voltage', 'AC 100–240V, 50/60Hz (145W)',
-    'weight', '9.4 kg / bộ'
+    'variant', '60-pixel',
+    'dimensions', '1000 × 600 × 150 mm · 18.2 kg',
+    'cable_travel_or_power', '60 × 20W RGBW Pixel + Tungsten Effect (1.200W)',
+    'speed', 'Tần số làm tươi 18.000 Hz · Pixel mapping 3D',
+    'control_protocol', 'Art-Net / sACN / DMX512 / Kling-Net',
+    'voltage', 'AC 100–240V, 50/60Hz',
+    'weight', '18.2 kg / module'
   ),
-  '/src/assets/images/product_kinetic_ball_1794743189815.jpg',
-  'https://squaresnake.vn/demo/kinetic-sphere-350',
+  '/assets/squaresnake/led-matrix.jpg',
+  '',
+  TRUE,
+  'available'
+),
+
+-- Laser (4 models: 20W, 30W, 40W, 60W)
+(
+  2,
+  '20W Laser',
+  'SS-LS20',
+  'Hệ thống Laser công suất 20W cho sự kiện trong nhà, câu lạc bộ và sân khấu hội nghị chuyên nghiệp.',
+  JSON_OBJECT(
+    'variant', '20W Pure Diode RGB',
+    'dimensions', '380 × 280 × 210 mm',
+    'cable_travel_or_power', '20.000 mW RGB (R:5W / G:6W / B:9W)',
+    'speed', 'Quét tia Galvo 40Kpps @ 8° (Góc mở 60°)',
+    'control_protocol', 'Pangolin FB4 / LAN / Art-Net / DMX512',
+    'voltage', 'AC 100–240V, 600W',
+    'weight', '18.0 kg · Chuẩn IP54'
+  ),
+  '/assets/squaresnake/laser.jpg',
+  '',
   FALSE,
   'available'
 ),
 (
-  1,
-  'Kinetic Ring Double Axis 1.2m',
-  'SS-KR120',
-  'Vòng ánh sáng pixel đường kính 1.2m trang bị 3 motor servo độc lập, cho phép vừa nâng hạ vừa xoay nghiêng đa trục 360 độ.',
+  2,
+  '30W Laser',
+  'SS-LS30',
+  'Hệ thống Laser 30W chuẩn chống nước IP65 ngoài trời, tích hợp bộ giải mã mạng Pangolin FB4.',
   JSON_OBJECT(
-    'dimensions', 'Đường kính 1.200 mm · Bản khung 45×45 mm',
+    'variant', '30W IP65 Outdoor',
+    'dimensions', '485 × 340 × 260 mm',
+    'cable_travel_or_power', '30.000 mW Pure Diode RGB (R:8W / G:10W / B:12W)',
+    'speed', 'Quét tia Galvo 45Kpps @ 8°',
+    'control_protocol', 'Pangolin FB4 (LAN / Art-Net / DMX)',
+    'voltage', 'AC 100–240V, 950W',
+    'weight', '28.5 kg · Chuẩn IP65'
+  ),
+  '/assets/squaresnake/laser.jpg',
+  '',
+  TRUE,
+  'available'
+),
+(
+  2,
+  '40W Laser',
+  'SS-LS40',
+  'Hệ thống Laser công suất lớn 40W tạo quạt tia và hiệu ứng không trung tầm xa cho lễ hội âm nhạc.',
+  JSON_OBJECT(
+    'variant', '40W High-Power',
+    'dimensions', '520 × 360 × 275 mm',
+    'cable_travel_or_power', '40.000 mW Pure Diode RGB',
+    'speed', 'Quét tia Galvo 45Kpps @ 8° · E-Stop Safety',
+    'control_protocol', 'Pangolin FB4 / Timecode / DMX512',
+    'voltage', 'AC 100–240V, 1.250W',
+    'weight', '32.0 kg · Chuẩn IP65'
+  ),
+  '/assets/squaresnake/laser.jpg',
+  '',
+  FALSE,
+  'available'
+),
+(
+  2,
+  '60W Laser',
+  'SS-LS60',
+  'Hệ thống Laser công suất cực đại 60W cho sân vận động, quảng trường và show trình diễn ngoài trời quy mô hàng chục nghìn khán giả.',
+  JSON_OBJECT(
+    'variant', '60W Stadium Grade',
+    'dimensions', '610 × 410 × 310 mm',
+    'cable_travel_or_power', '60.000 mW Pure Diode RGB',
+    'speed', 'Quét tia Galvo 45Kpps · Chiếu xa > 1.500m',
+    'control_protocol', 'Pangolin FB4 / Optical Fiber / Art-Net',
+    'voltage', 'AC 100–240V, 1.850W',
+    'weight', '42.0 kg · Chuẩn IP65'
+  ),
+  '/assets/squaresnake/laser.jpg',
+  '',
+  FALSE,
+  'available'
+),
+
+-- Kinetic (5 models: Balls, Rings, Lanterns, Milk-drop, Metal spheres)
+(
+  3,
+  'Kinetic Balls',
+  'SS-KN-BALL',
+  'Quả cầu LED khuếch tán 360 độ kết hợp tời kéo servo siêu êm 6m–12m, tạo sóng chuyển động không gian đồng bộ âm nhạc.',
+  JSON_OBJECT(
+    'variant', 'Balls (250mm / 350mm)',
+    'dimensions', 'Đường kính bóng 250 mm · Tời 320×210×280 mm',
+    'cable_travel_or_power', 'Hành trình cáp 6m – 12m · LED 18W RGBW',
+    'speed', '0.1 – 1.2 m/s (Gia tốc mượt, < 36dB)',
+    'control_protocol', 'Art-Net / DMX512 / Madrix 3D',
+    'voltage', 'AC 100–240V, 50/60Hz (110W)',
+    'weight', '7.8 kg / bộ'
+  ),
+  '/assets/squaresnake/kinetic-balls.jpg',
+  '',
+  TRUE,
+  'available'
+),
+(
+  3,
+  'Kinetic Rings',
+  'SS-KN-RING',
+  'Vòng ánh sáng pixel đường kính 1.2m–1.8m trang bị 3 tời servo độc lập, cho phép vừa nâng hạ vừa xoay nghiêng đa trục 360 độ.',
+  JSON_OBJECT(
+    'variant', 'Rings (Double Axis 1.2m)',
+    'dimensions', 'Đường kính 1.200 mm · Nhôm 6061',
     'cable_travel_or_power', 'Hành trình 9.0 m · 120W RGB Pixel hai mặt',
     'speed', '0.8 m/s · Nghiêng góc 0° – 360°',
     'control_protocol', 'Art-Net / Madrix / GrandMA3 Timecode',
     'voltage', 'AC 100–240V (360W / bộ 3 winch)',
     'weight', '24.0 kg / bộ hoàn chỉnh'
   ),
-  '/src/assets/images/product_kinetic_ring_1794743191297.jpg',
-  'https://squaresnake.vn/demo/kinetic-ring-120',
-  TRUE,
-  'available'
-),
-(
-  1,
-  'Kinetic Ring Tri-Winch 1.8m',
-  'SS-KR180',
-  'Vòng LED khổ đại 1.8m hợp kim nhôm hàng không, xếp tầng đồng tâm tạo xoắn ốc ánh sáng trên sân khấu lớn.',
-  JSON_OBJECT(
-    'dimensions', 'Đường kính 1.800 mm · Nhôm 6061',
-    'cable_travel_or_power', 'Hành trình 10.0 m · 180W RGBW Pixel',
-    'speed', '0.75 m/s · 3 Servo Winch đồng bộ',
-    'control_protocol', 'Art-Net / DMX512 / Madrix',
-    'voltage', 'AC 100–240V (480W)',
-    'weight', '31.5 kg / bộ'
-  ),
-  '/src/assets/images/product_kinetic_ring_1794743191297.jpg',
-  'https://squaresnake.vn/demo/kinetic-ring-180',
-  FALSE,
-  'available'
-),
-(
-  2,
-  'Laser Full-Color 30W IP65',
-  'SS-LP30',
-  'Hệ thống trình diễn Laser công suất thực 30W Pure Diode RGB chống bụi nước IP65 ngoài trời, tích hợp bộ giải mã Pangolin FB4.',
-  JSON_OBJECT(
-    'dimensions', '485 × 340 × 260 mm',
-    'cable_travel_or_power', '30.000 mW Pure Diode (R:8W / G:10W / B:12W)',
-    'speed', 'Quét tia Galvo 45Kpps @ 8° (Góc mở 60°)',
-    'control_protocol', 'Pangolin FB4 (LAN / Art-Net / DMX)',
-    'voltage', 'AC 100–240V, 950W',
-    'weight', '28.5 kg · Chuẩn IP65'
-  ),
-  '/src/assets/images/product_laser_pro_1794743188964.jpg',
-  'https://squaresnake.vn/demo/laser-30w-ip65',
-  TRUE,
-  'available'
-),
-(
-  2,
-  'Laser Show 15W Analog RGB',
-  'SS-LP15',
-  'Máy chiếu tia Laser RGB 15W điều biến Analog cho phép pha trộn 16,7 triệu màu mượt mà, tối ưu cho sân khấu trong nhà và nhà thi đấu.',
-  JSON_OBJECT(
-    'dimensions', '360 × 270 × 195 mm',
-    'cable_travel_or_power', '15.000 mW Analog RGB (R:4W / G:5W / B:6W)',
-    'speed', 'Quét tia Galvo 40Kpps @ 8°',
-    'control_protocol', 'Pangolin FB4 / ILDA DB25 / DMX512',
-    'voltage', 'AC 100–240V, 480W',
-    'weight', '15.2 kg · Chuẩn IP54'
-  ),
-  '/src/assets/images/product_laser_pro_1794743188964.jpg',
-  'https://squaresnake.vn/demo/laser-15w-analog',
-  FALSE,
-  'available'
-),
-(
-  3,
-  'LED Matrix Panel 5x5 Pixel',
-  'SS-LM55',
-  'Ma trận điểm ảnh LED 5x5 trang bị 25 bóng COB 30W ánh sáng ấm tungsten và viền RGB halo, ghép nối modular không viền.',
-  JSON_OBJECT(
-    'dimensions', '580 × 580 × 145 mm',
-    'cable_travel_or_power', '25 × 30W COB Warm White + RGB Halo (820W)',
-    'speed', 'Tần số làm tươi 18.000 Hz · Góc chiếu 4.5°',
-    'control_protocol', 'DMX512 (7/25/100 CH) / Art-Net / sACN',
-    'voltage', 'AC 100–240V (PowerCON True1)',
-    'weight', '14.5 kg / panel'
-  ),
-  '/src/assets/images/product_led_matrix_1794743188837.jpg',
-  'https://squaresnake.vn/demo/led-matrix-5x5',
+  '/assets/squaresnake/kinetic-rings.jpg',
+  '',
   TRUE,
   'available'
 ),
 (
   3,
-  'LED Matrix Bar 10x10 Beam',
-  'SS-LMB10',
-  'Thanh ma trận LED công suất cao 10 pixel tia hẹp 3.8° chuẩn IP65, chuyên tạo bức tường ánh sáng và hiệu ứng chasing EDM.',
+  'Kinetic Lanterns',
+  'SS-KN-LANT',
+  'Hệ thống đèn lồng Kinetic nghệ thuật treo trần mang âm hưởng kiến trúc ánh sáng đương đại cho lễ hội và sự kiện văn hóa.',
   JSON_OBJECT(
-    'dimensions', '1000 × 120 × 165 mm',
-    'cable_travel_or_power', '10 × 40W Osram RGBW COB (420W)',
-    'speed', 'Tần số làm tươi 18.000 Hz · Góc tia 3.8°',
-    'control_protocol', 'DMX512 / Art-Net / RDM',
-    'voltage', 'AC 100–240V, 50/60Hz',
-    'weight', '8.2 kg · Chuẩn IP65'
+    'variant', 'Lanterns',
+    'dimensions', '380 × 380 × 460 mm · Tời 320×210×280 mm',
+    'cable_travel_or_power', 'Hành trình cáp 8.0 m · LED 24W RGBW',
+    'speed', '0.1 – 0.9 m/s · Phanh từ kép an toàn',
+    'control_protocol', 'DMX512 / Art-Net / Madrix',
+    'voltage', 'AC 100–240V, 120W',
+    'weight', '8.6 kg / bộ'
   ),
-  '/src/assets/images/product_led_matrix_1794743188837.jpg',
-  'https://squaresnake.vn/demo/led-matrix-bar',
+  '/assets/squaresnake/kinetic-lanterns.jpg',
+  '',
+  FALSE,
+  'available'
+),
+(
+  3,
+  'Kinetic Milk-drop',
+  'SS-KN-DROP',
+  'Đầu đèn giọt sương hữu cơ ánh sáng ấm/RGB tạo chuyển động mềm mại theo giai điệu cho triển lãm nghệ thuật và gala.',
+  JSON_OBJECT(
+    'variant', 'Milk-drop',
+    'dimensions', '180 × 180 × 340 mm · Tời đôi chuẩn DMX',
+    'cable_travel_or_power', 'Hành trình cáp 6m – 10m · LED 16W RGBW',
+    'speed', '0.1 – 1.0 m/s · Chống xoắn cáp',
+    'control_protocol', 'Art-Net / DMX512 / Timecode',
+    'voltage', 'AC 100–240V, 95W',
+    'weight', '6.9 kg / bộ'
+  ),
+  '/assets/squaresnake/kinetic-milk-drop.jpg',
+  '',
+  FALSE,
+  'available'
+),
+(
+  3,
+  'Kinetic Metal spheres',
+  'SS-KN-METL',
+  'Quả cầu kim loại gương phản chiếu ánh sáng Moving Head & Laser không cần phát sáng trực tiếp, tạo không gian kiến trúc sang trọng.',
+  JSON_OBJECT(
+    'variant', 'Metal spheres (Mirror)',
+    'dimensions', 'Đường kính cầu 220mm / 300mm',
+    'cable_travel_or_power', 'Hành trình cáp 8m – 12m · Cáp thép tải trọng cao',
+    'speed', '0.1 – 1.1 m/s · Servo tốc độ biến thiên',
+    'control_protocol', 'Art-Net / DMX512 / GrandMA3',
+    'voltage', 'AC 100–240V, 85W',
+    'weight', '8.2 kg / bộ'
+  ),
+  '/assets/squaresnake/kinetic-metal-spheres.jpg',
+  '',
   FALSE,
   'available'
 );
@@ -247,36 +319,27 @@ INSERT INTO projects (
   'Zeit Media & Live Nation VN',
   'Sân vận động Mỹ Đình, Hà Nội',
   '2026-10-18',
-  '96× Kinetic Sphere Pro 350mm · 12× Laser 30W IP65 · 32× LED Matrix 5x5',
-  'Triển khai ma trận 96 quả cầu Kinetic cỡ lớn kết hợp 12 máy Laser 30W IP65 đồng bộ Timecode với bàn GrandMA3 cho 35.000 khán giả.',
-  '/src/assets/images/hero_stage_show_1794743188164.jpg'
+  'Laser 60W & 40W · Kinetic Balls · Timecode GrandMA3',
+  'Triển khai đồng bộ hệ thống tia Laser công suất lớn ngoài trời kết hợp ma trận Kinetic trên giàn truss chính cho 35.000 khán giả.',
+  '/assets/squaresnake/laser.jpg'
 ),
 (
   'Triển Lãm Ô Tô Tương Lai SECC',
   'VinMotion Auto Group',
   'SECC Quận 7, TP. Hồ Chí Minh',
   '2026-09-12',
-  '12× Kinetic Ring Double Axis 1.2m · 48× Kinetic Ball 250mm · 16× LED Matrix Bar',
-  'Lắp đặt 12 vòng Kinetic Ring xếp tầng đồng tâm phía trên khu vực trưng bày xe concept, vận hành liên hoàn 10 giờ mỗi ngày.',
-  '/src/assets/images/product_kinetic_ring_1794743191297.jpg'
+  'Kinetic Rings · Kinetic Metal spheres · 20-pixel LED Matrix',
+  'Hệ thống vòng Kinetic đa trục chuyển động mượt mà phía trên khu trưng bày xe concept suốt 10 giờ/ngày.',
+  '/assets/squaresnake/kinetic-rings.jpg'
 ),
 (
   'Countdown Gala Phố Đi Bộ Nguyễn Huệ',
   'Sở Văn Hóa & Nghệ Thuật TP.HCM',
   'Quận 1, TP. Hồ Chí Minh',
   '2026-08-29',
-  '40× LED Matrix 5x5 · 8× Laser Full-Color 30W IP65 · 64× Kinetic Ball 250mm',
-  'Tổ hợp bức tường LED Matrix 5x5 cùng 8 hệ thống Laser 30W chống ẩm ngoài trời phục vụ hơn 50.000 khán giả.',
-  '/src/assets/images/product_kinetic_ball_1794743189815.jpg'
-),
-(
-  'Diễn Đàn Công Nghệ Quốc Gia',
-  'FPT Digital & VTV Events',
-  'Trung Tâm Hội Nghị Quốc Gia, Hà Nội',
-  '2026-07-15',
-  '80× Kinetic Ball 250mm · 6× Laser 15W Analog · 6× Kinetic Ring 1.2m',
-  'Hệ thống Kinetic độ ồn siêu thấp (< 35dB) kết hợp Laser 15W không sọc hình trên máy quay truyền hình 4K trực tiếp.',
-  '/src/assets/images/product_led_matrix_1794743188837.jpg'
+  '60-pixel LED Matrix · Laser 30W · Kinetic Balls',
+  'Tổ hợp bức tường LED Matrix hiệu ứng sóng pixel 3D không nhấp nháy trên camera truyền hình trực tiếp.',
+  '/assets/squaresnake/led-matrix.jpg'
 );
 
 INSERT INTO contacts (
@@ -288,8 +351,8 @@ INSERT INTO contacts (
   'nam.tran@apexevent.vn',
   'Apex Event Production',
   '2026-12-24',
-  'Kinetic Ball, Laser',
-  'Sân khấu 28m x 14m x 12m (trong nhà). Cần khoảng 48 quả Kinetic Ball 250mm và 4 máy Laser 15W.',
+  'Kinetic Balls, 30W Laser',
+  'Sân khấu 28m x 14m x 12m (trong nhà). Cần khoảng 48 quả Kinetic Balls và 4 máy Laser 30W.',
   'quoted'
 ),
 (
@@ -298,7 +361,7 @@ INSERT INTO contacts (
   'vy.le@skylightagency.vn',
   'Skylight Creative Agency',
   '2026-12-31',
-  'Kinetic Ring, LED Matrix',
-  'Quảng trường ngoài trời 36m x 18m x 15m. Cần báo giá 8 vòng Kinetic Ring 1.2m và 24 panel LED Matrix 5x5.',
+  'Kinetic Rings, 60-pixel LED Matrix',
+  'Quảng trường ngoài trời 36m x 18m x 15m. Cần báo giá 8 vòng Kinetic Rings và 24 panel 60-pixel LED Matrix.',
   'pending'
 );

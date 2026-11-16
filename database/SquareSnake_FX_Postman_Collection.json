@@ -1,0 +1,143 @@
+{
+  "info": {
+    "name": "SquareSnake FX Vietnam — MySQL REST API",
+    "_postman_id": "a6f7f9e2-4f92-4e7b-9d12-89a314002026",
+    "description": "Bộ API Postman test trực tiếp kết nối MySQL (Bảng categories, products, projects, media_assets, site_settings, customer_inbox) trên máy local http://localhost:3000.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "adminToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Kiểm tra kết nối Server & MySQL",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "2. Lấy toàn bộ dữ liệu trang khách hàng (CMS Public)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/cms/public"
+      }
+    },
+    {
+      "name": "3. Lấy danh sách Danh mục (categories)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/categories"
+      }
+    },
+    {
+      "name": "4. Lấy danh sách Sản phẩm (products)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/products"
+      }
+    },
+    {
+      "name": "5. Lấy danh sách Dự án (projects)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/projects"
+      }
+    },
+    {
+      "name": "6. Khách hàng gửi báo giá mới (INSERT customer_inbox)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_name\": \"Nguyễn Minh Tuấn\",\n  \"phone\": \"tuan@eventpro.vn · 0905123456\",\n  \"company_agency\": \"EventPro Vietnam\",\n  \"event_date\": \"2026-12-20\",\n  \"interested_categories\": [\"Laser 40W\", \"Kinetic Rings\"],\n  \"stage_requirements\": \"Sân khấu ngoài trời 30m x 15m, cần 6 vòng Kinetic Rings và 4 máy Laser 40W.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/contacts"
+      }
+    },
+    {
+      "name": "7. Admin Đăng nhập (Tự động lưu Token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json && json.token) { pm.collectionVariables.set('adminToken', json.token); }"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"SquareSnake@2026\"\n}"
+        },
+        "url": "{{baseUrl}}/api/admin/login"
+      }
+    },
+    {
+      "name": "8. Admin Xem Inbox Khách Hàng (SELECT customer_inbox)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+        "url": "{{baseUrl}}/api/admin/inbox"
+      }
+    },
+    {
+      "name": "9. Admin Cập nhật trạng thái Inbox (UPDATE customer_inbox)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"quoted\",\n  \"admin_note\": \"Đã gửi báo giá qua email cho khách hàng.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/admin/inbox/2"
+      }
+    },
+    {
+      "name": "10. Admin Thêm sản phẩm mới vào MySQL (INSERT products)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"collection\": \"laser\",\n  \"fullName\": \"80W Outdoor Laser\",\n  \"shortLabel\": \"80W\",\n  \"titleLine1\": \"80W\",\n  \"titleLine2\": \"Laser\",\n  \"cardTag\": \"Laser system / 80W\",\n  \"heroSummary\": \"Hệ thống Laser công suất siêu lớn 80W IP65 chuyên trị đại nhạc hội sân vận động.\",\n  \"imageUrl\": \"/assets/squaresnake/laser.jpg\",\n  \"specs\": [\n    { \"label\": \"Power option\", \"value\": \"80W Pure Diode RGB\" },\n    { \"label\": \"Control protocol\", \"value\": \"Pangolin FB4 / Art-Net\" }\n  ]\n}"
+        },
+        "url": "{{baseUrl}}/api/admin/models"
+      }
+    },
+    {
+      "name": "11. Admin Sửa thông tin Trang chủ & Liên hệ (UPDATE site_settings)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"+84 909 886 247\",\n  \"email\": \"baogia@squaresnake.vn\"\n}"
+        },
+        "url": "{{baseUrl}}/api/admin/site-settings"
+      }
+    }
+  ]
+}

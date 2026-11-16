@@ -3,94 +3,236 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quản Trị Hệ Thống — SquareSnake Việt Nam</title>
+    <title>Quản Trị CMS &amp; Inbox — SquareSnake FX Việt Nam</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body class="bg-stage-dark text-white">
-    <header class="navbar navbar-dark border-bottom border-stage bg-stage-dark">
-      <div class="container">
-        <a class="navbar-brand fw-bold font-display" href="index.html">
-          <span>SQUARE</span><span class="text-cyan-neon">SNAKE</span>
-          <span class="small fw-normal text-stage-muted ms-2">Quản trị nội bộ</span>
+  <body class="bg-obsidian text-white">
+    <header class="ss-header py-2">
+      <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <a class="d-flex align-items-center gap-2 text-decoration-none" href="index.html">
+          <img
+            src="assets/squaresnake/logo-mark.png"
+            alt="SquareSnake FX"
+            width="32"
+            height="32"
+            style="object-fit: contain"
+          />
+          <span class="fw-bold font-display text-white" style="font-size: 14px; letter-spacing: 0.04em;">
+            SQUARESNAKE FX
+          </span>
+          <span class="ss-kicker ms-2">ADMIN CMS (MYSQL)</span>
         </a>
-        <a href="index.html" class="btn btn-sm btn-stage-outline">Về trang khách hàng</a>
+        <a href="index.html" class="btn-ss-dark text-decoration-none">← Về trang khách hàng</a>
       </div>
     </header>
 
     <main class="container py-5">
-      <div class="row g-4">
-        <!-- Danh sách yêu cầu báo giá -->
-        <div class="col-lg-8">
-          <div class="stage-card p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h1 class="h4 fw-bold font-display mb-0">Danh Sách Yêu Cầu Báo Giá</h1>
-              <button type="button" id="refreshContactsBtn" class="btn btn-sm btn-outline-cyan">
-                Làm mới
-              </button>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-dark table-hover align-middle mb-0">
-                <thead>
-                  <tr class="small text-stage-muted">
-                    <th>Khách hàng</th>
-                    <th>Đơn vị / SĐT</th>
-                    <th>Thiết bị quan tâm</th>
-                    <th>Trạng thái</th>
-                  </tr>
-                </thead>
-                <tbody id="contactsTableBody"></tbody>
-              </table>
-            </div>
-          </div>
+      <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div>
+          <p class="ss-kicker mb-2">CONTROL CENTER · 4 BẢNG MYSQL</p>
+          <h1 class="h2 fw-semibold font-display text-white mb-0">
+            Quản Trị Inbox, Thiết Bị &amp; Dự Án
+          </h1>
         </div>
-
-        <!-- Form thêm thiết bị mới -->
-        <div class="col-lg-4">
-          <div class="stage-card p-4">
-            <h2 class="h5 fw-bold font-display mb-3">Thêm Thiết Bị Mới</h2>
-            <form id="addProductForm">
-              <div class="mb-3">
-                <label class="form-label small">Nhóm thiết bị</label>
-                <select id="prodCategory" class="form-select stage-input" required>
-                  <option value="1">Hệ thống Kinetic</option>
-                  <option value="2">Ánh sáng Laser</option>
-                  <option value="3">Màn hình LED Matrix</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small">Tên thiết bị *</label>
-                <input type="text" id="prodName" class="form-control stage-input" required />
-              </div>
-              <div class="mb-3">
-                <label class="form-label small">Mã Model *</label>
-                <input type="text" id="prodCode" class="form-control stage-input" placeholder="SS-KB400" required />
-              </div>
-              <div class="mb-3">
-                <label class="form-label small">Mô tả ngắn</label>
-                <textarea id="prodDesc" rows="2" class="form-control stage-input"></textarea>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small">Công suất / Hành trình cáp</label>
-                <input type="text" id="prodPower" class="form-control stage-input" placeholder="Hành trình 12m · 24W RGBW" />
-              </div>
-              <div class="mb-3">
-                <label class="form-label small">Chuẩn điều khiển</label>
-                <input type="text" id="prodControl" class="form-control stage-input" placeholder="Art-Net / DMX512 / Madrix" />
-              </div>
-              <button type="submit" class="btn btn-laser-red w-100 fw-semibold">
-                Lưu thiết bị vào CSDL
-              </button>
-            </form>
-            <div id="adminProductAlert" class="alert mt-3 d-none" role="alert"></div>
-          </div>
+        <div class="d-flex flex-wrap gap-2" id="adminTabs">
+          <button type="button" class="btn-ss-gold" data-tab="inbox">Inbox Khách Hàng</button>
+          <button type="button" class="btn-ss-dark" data-tab="products">Sản Phẩm &amp; Media</button>
+          <button type="button" class="btn-ss-dark" data-tab="projects">Hồ Sơ Dự Án</button>
         </div>
       </div>
+
+      <!-- TAB 1: INBOX KHÁCH HÀNG (contacts) -->
+      <section id="tab-inbox" class="admin-panel">
+        <div class="ss-card p-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <h2 class="h5 fw-semibold text-white mb-0">
+              Danh Sách Yêu Cầu Báo Giá (<code class="text-gold">contacts</code>)
+            </h2>
+            <div class="d-flex gap-2">
+              <select id="contactStatusFilter" class="form-select ss-input form-select-sm" style="width: 170px;">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="pending">Chờ xử lý</option>
+                <option value="contacted">Đã liên hệ</option>
+                <option value="quoted">Đã báo giá</option>
+              </select>
+              <button type="button" id="refreshContactsBtn" class="btn-ss-dark">Làm mới</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0" style="--bs-table-bg: #141417;">
+              <thead>
+                <tr class="small text-muted-ss text-uppercase">
+                  <th>Khách hàng</th>
+                  <th>Liên hệ / Đơn vị</th>
+                  <th>Thiết bị quan tâm</th>
+                  <th>Trạng thái</th>
+                  <th class="text-end">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="contactsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: SẢN PHẨM & MEDIA (products) -->
+      <section id="tab-products" class="admin-panel d-none">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="ss-card p-4">
+              <h2 class="h5 fw-semibold text-white mb-3">Thêm Thiết Bị &amp; Media Mới</h2>
+              <form id="addProductForm">
+                <div class="mb-3">
+                  <label class="form-label small">Nhóm thiết bị (<code class="text-gold">categories</code>)</label>
+                  <select id="prodCategory" class="form-select ss-input" required>
+                    <option value="1">1 · LED Matrix</option>
+                    <option value="2">2 · Laser</option>
+                    <option value="3">3 · Kinetic</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Tên thiết bị *</label>
+                  <input type="text" id="prodName" class="form-control ss-input" placeholder="VD: 80W Outdoor Laser" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Mã Model *</label>
+                  <input type="text" id="prodCode" class="form-control ss-input" placeholder="SS-LS80" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Mô tả ngắn</label>
+                  <textarea id="prodDesc" rows="2" class="form-control ss-input"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Công suất / Hành trình cáp</label>
+                  <input type="text" id="prodPower" class="form-control ss-input" placeholder="60W Pure Diode / 12m" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Chuẩn điều khiển</label>
+                  <input type="text" id="prodControl" class="form-control ss-input" placeholder="Art-Net / DMX512 / Pangolin FB4" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Tải ảnh / video sân khấu từ máy</label>
+                  <input type="file" id="prodMediaFile" class="form-control ss-input" accept="image/*,video/mp4,video/webm" />
+                  <small id="uploadStatusHint" class="text-muted-ss d-block mt-1"></small>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Hoặc đường dẫn Ảnh URL</label>
+                  <input type="text" id="prodImageUrl" class="form-control ss-input" value="/assets/squaresnake/laser.jpg" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Đường dẫn Video Demo (MP4/YouTube)</label>
+                  <input type="text" id="prodVideoUrl" class="form-control ss-input" placeholder="/uploads/demo.mp4" />
+                </div>
+                <button type="submit" class="btn-ss-gold w-100">Lưu thiết bị vào MySQL</button>
+              </form>
+              <div id="adminProductAlert" class="mt-3 p-3 small d-none"></div>
+            </div>
+          </div>
+
+          <div class="col-lg-8">
+            <div class="ss-card p-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 fw-semibold text-white mb-0">
+                  Danh Sách Thiết Bị Hiện Có (<code class="text-gold">products</code>)
+                </h2>
+                <button type="button" id="refreshProductsBtn" class="btn-ss-dark">Làm mới</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0" style="--bs-table-bg: #141417;">
+                  <thead>
+                    <tr class="small text-muted-ss text-uppercase">
+                      <th>Thiết bị</th>
+                      <th>Nhóm</th>
+                      <th>Trạng thái</th>
+                      <th class="text-end">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="productsTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: HỒ SƠ DỰ ÁN (projects) -->
+      <section id="tab-projects" class="admin-panel d-none">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="ss-card p-4">
+              <h2 class="h5 fw-semibold text-white mb-3">Đăng Hồ Sơ Dự Án Mới</h2>
+              <form id="addProjectForm">
+                <div class="mb-3">
+                  <label class="form-label small">Tên sự kiện *</label>
+                  <input type="text" id="projName" class="form-control ss-input" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Khách hàng / Agency *</label>
+                  <input type="text" id="projClient" class="form-control ss-input" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Địa điểm *</label>
+                  <input type="text" id="projLocation" class="form-control ss-input" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Ngày tổ chức *</label>
+                  <input type="date" id="projDate" class="form-control ss-input" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Thiết bị triển khai *</label>
+                  <input type="text" id="projEquip" class="form-control ss-input" placeholder="Laser 60W · Kinetic Balls" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Mô tả tóm tắt</label>
+                  <textarea id="projSummary" rows="2" class="form-control ss-input"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Ảnh thumbnail</label>
+                  <input type="text" id="projThumb" class="form-control ss-input" value="/assets/squaresnake/hero-concert.jpg" />
+                </div>
+                <button type="submit" class="btn-ss-gold w-100">Lưu dự án vào MySQL</button>
+              </form>
+              <div id="adminProjectAlert" class="mt-3 p-3 small d-none"></div>
+            </div>
+          </div>
+
+          <div class="col-lg-8">
+            <div class="ss-card p-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 fw-semibold text-white mb-0">
+                  Danh Sách Dự Án (<code class="text-gold">projects</code>)
+                </h2>
+                <button type="button" id="refreshProjectsBtn" class="btn-ss-dark">Làm mới</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0" style="--bs-table-bg: #141417;">
+                  <thead>
+                    <tr class="small text-muted-ss text-uppercase">
+                      <th>Sự kiện &amp; Địa điểm</th>
+                      <th>Thiết bị sử dụng</th>
+                      <th class="text-end">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projectsTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <script src="js/admin.js"></script>

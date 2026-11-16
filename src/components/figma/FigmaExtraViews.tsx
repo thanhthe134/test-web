@@ -271,6 +271,247 @@ export const FigmaInfoView: React.FC<InfoViewProps> = ({
           </div>
         )}
 
+        {/* System Modeling & Architecture (draw.io / PlantUML) */}
+        <div className="mb-16 pt-12 border-t border-[#1E1E24]">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.12em] text-[#E5C148] uppercase mb-2">
+                MÔ HÌNH HÓA HỆ THỐNG · DRAW.IO &amp; PLANTUML
+              </p>
+              <h2 className="font-display text-2xl sm:text-3xl font-semibold text-white tracking-[-0.02em]">
+                Sơ đồ Use Case, Sitemap, Kiến trúc Client–Server &amp; ERD 4 Bảng MySQL
+              </h2>
+            </div>
+            <a
+              href="/diagrams/SquareSnake_System_Diagrams.drawio"
+              download
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#E5C148] hover:bg-[#D4B038] text-[#0B0B0D] text-xs font-semibold whitespace-nowrap shrink-0 transition-colors"
+            >
+              <span>Tải file draw.io (4 trang)</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 01 Use Case */}
+            <div className="bg-[#141417] border border-[#242429] p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <p className="text-[10px] font-semibold tracking-[0.1em] text-[#E5C148] uppercase">
+                    01 / USE CASE DIAGRAM
+                  </p>
+                  <a
+                    href="/diagrams/01-use-case.puml"
+                    download
+                    className="text-xs text-[#9E9EA7] hover:text-[#E5C148] transition-colors"
+                  >
+                    Tải .puml ↓
+                  </a>
+                </div>
+                <svg viewBox="0 0 560 220" className="w-full h-auto bg-[#0B0B0D] border border-[#1E1E24] p-2">
+                  <rect x="130" y="14" width="300" height="192" fill="#111114" stroke="#242429" />
+                  <text x="280" y="32" textAnchor="middle" fill="#E5C148" fontSize="10" fontWeight="600">
+                    SHOWROOM SQUARESNAKE FX
+                  </text>
+                  <circle cx="55" cy="70" r="12" fill="none" stroke="#E5C148" strokeWidth="1.5" />
+                  <line x1="55" y1="82" x2="55" y2="118" stroke="#E5C148" strokeWidth="1.5" />
+                  <line x1="37" y1="95" x2="73" y2="95" stroke="#E5C148" strokeWidth="1.5" />
+                  <text x="55" y="138" textAnchor="middle" fill="#FFFFFF" fontSize="10">Khách hàng</text>
+
+                  <circle cx="505" cy="120" r="12" fill="none" stroke="#E5C148" strokeWidth="1.5" />
+                  <line x1="505" y1="132" x2="505" y2="168" stroke="#E5C148" strokeWidth="1.5" />
+                  <line x1="487" y1="145" x2="523" y2="145" stroke="#E5C148" strokeWidth="1.5" />
+                  <text x="505" y="188" textAnchor="middle" fill="#FFFFFF" fontSize="10">Admin CMS</text>
+
+                  <ellipse cx="280" cy="56" rx="115" ry="15" fill="#141417" stroke="#E5C148" />
+                  <text x="280" y="60" textAnchor="middle" fill="#FFFFFF" fontSize="10">Xem LED Matrix, Laser, Kinetic</text>
+
+                  <ellipse cx="280" cy="96" rx="115" ry="15" fill="#141417" stroke="#E5C148" />
+                  <text x="280" y="100" textAnchor="middle" fill="#FFFFFF" fontSize="10">Tra cứu thông số kỹ thuật &amp; Dự án</text>
+
+                  <ellipse cx="280" cy="136" rx="115" ry="15" fill="#18181C" stroke="#E5C148" />
+                  <text x="280" y="140" textAnchor="middle" fill="#E5C148" fontSize="10" fontWeight="600">Gửi yêu cầu báo giá (contacts)</text>
+
+                  <ellipse cx="280" cy="176" rx="115" ry="15" fill="#141417" stroke="#E5C148" />
+                  <text x="280" y="180" textAnchor="middle" fill="#FFFFFF" fontSize="10">CRUD Sản phẩm, Media &amp; Xử lý Inbox</text>
+
+                  <line x1="78" y1="90" x2="165" y2="56" stroke="#E5C148" strokeOpacity="0.65" />
+                  <line x1="78" y1="98" x2="165" y2="96" stroke="#E5C148" strokeOpacity="0.65" />
+                  <line x1="78" y1="106" x2="165" y2="136" stroke="#E5C148" strokeOpacity="0.65" />
+                  <line x1="482" y1="145" x2="395" y2="176" stroke="#E5C148" strokeOpacity="0.65" />
+                  <line x1="482" y1="140" x2="395" y2="136" stroke="#E5C148" strokeOpacity="0.4" />
+                </svg>
+              </div>
+            </div>
+
+            {/* 02 Sitemap */}
+            <div className="bg-[#141417] border border-[#242429] p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <p className="text-[10px] font-semibold tracking-[0.1em] text-[#E5C148] uppercase">
+                    02 / WEBSITE SITEMAP
+                  </p>
+                  <a
+                    href="/diagrams/02-sitemap.puml"
+                    download
+                    className="text-xs text-[#9E9EA7] hover:text-[#E5C148] transition-colors"
+                  >
+                    Tải .puml ↓
+                  </a>
+                </div>
+                <svg viewBox="0 0 560 220" className="w-full h-auto bg-[#0B0B0D] border border-[#1E1E24] p-2">
+                  <rect x="200" y="16" width="160" height="32" fill="#E5C148" />
+                  <text x="280" y="36" textAnchor="middle" fill="#0B0B0D" fontSize="11" fontWeight="700">
+                    TRANG CHỦ (HOME)
+                  </text>
+                  <line x1="280" y1="48" x2="280" y2="68" stroke="#E5C148" />
+                  <line x1="55" y1="68" x2="505" y2="68" stroke="#E5C148" />
+
+                  {[
+                    { x: 15, label: 'Về Chúng Tôi' },
+                    { x: 125, label: 'Sản Phẩm (3)' },
+                    { x: 235, label: 'Dự Án' },
+                    { x: 345, label: 'Thông Tin' },
+                    { x: 455, label: 'Báo Giá / CMS' },
+                  ].map((node) => (
+                    <g key={node.label}>
+                      <line x1={node.x + 45} y1="68" x2={node.x + 45} y2="86" stroke="#E5C148" />
+                      <rect x={node.x} y="86" width="90" height="28" fill="#141417" stroke="#E5C148" />
+                      <text x={node.x + 45} y="104" textAnchor="middle" fill="#FFFFFF" fontSize="9.5">
+                        {node.label}
+                      </text>
+                    </g>
+                  ))}
+
+                  <line x1="170" y1="114" x2="170" y2="132" stroke="#E5C148" />
+                  <line x1="85" y1="132" x2="365" y2="132" stroke="#E5C148" />
+                  {[
+                    { x: 25, title: 'LED Matrix', sub: '20px · 60px' },
+                    { x: 165, title: 'Laser RGB', sub: '20W·30W·40W·60W' },
+                    { x: 305, title: 'Kinetic (5)', sub: 'Balls·Rings·Lanterns' },
+                  ].map((cat) => (
+                    <g key={cat.title}>
+                      <line x1={cat.x + 60} y1="132" x2={cat.x + 60} y2="148" stroke="#E5C148" />
+                      <rect x={cat.x} y="148" width="120" height="46" fill="#141417" stroke="#242429" />
+                      <text x={cat.x + 60} y="166" textAnchor="middle" fill="#E5C148" fontSize="10" fontWeight="600">
+                        {cat.title}
+                      </text>
+                      <text x={cat.x + 60} y="182" textAnchor="middle" fill="#9E9EA7" fontSize="9">
+                        {cat.sub}
+                      </text>
+                    </g>
+                  ))}
+                </svg>
+              </div>
+            </div>
+
+            {/* 03 Client-Server Architecture */}
+            <div className="bg-[#141417] border border-[#242429] p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <p className="text-[10px] font-semibold tracking-[0.1em] text-[#E5C148] uppercase">
+                    03 / KIẾN TRÚC CLIENT – SERVER (3 TẦNG)
+                  </p>
+                  <a
+                    href="/diagrams/03-client-server-architecture.puml"
+                    download
+                    className="text-xs text-[#9E9EA7] hover:text-[#E5C148] transition-colors"
+                  >
+                    Tải .puml ↓
+                  </a>
+                </div>
+                <svg viewBox="0 0 560 220" className="w-full h-auto bg-[#0B0B0D] border border-[#1E1E24] p-2">
+                  <rect x="20" y="16" width="520" height="48" fill="#141417" stroke="#E5C148" />
+                  <text x="280" y="36" textAnchor="middle" fill="#E5C148" fontSize="10" fontWeight="700">
+                    PRESENTATION LAYER (CLIENT + POSTMAN)
+                  </text>
+                  <text x="280" y="52" textAnchor="middle" fill="#FFFFFF" fontSize="9.5">
+                    HTML5 · CSS3 · Bootstrap 5 · JS ES6+ (Fetch API) &amp; Postman JSON Testing
+                  </text>
+
+                  <line x1="280" y1="64" x2="280" y2="86" stroke="#E5C148" strokeWidth="1.5" />
+                  <text x="340" y="79" fill="#9E9EA7" fontSize="9">RESTful JSON / HTTP</text>
+
+                  <rect x="20" y="86" width="520" height="50" fill="#141417" stroke="#E5C148" />
+                  <text x="280" y="106" textAnchor="middle" fill="#E5C148" fontSize="10" fontWeight="700">
+                    BUSINESS LOGIC LAYER (NODE.JS v20.x &amp; EXPRESS 4.x)
+                  </text>
+                  <text x="280" y="123" textAnchor="middle" fill="#FFFFFF" fontSize="9.5">
+                    /api/products · /api/projects · /api/contacts · Static Media (/assets, /uploads)
+                  </text>
+
+                  <line x1="280" y1="136" x2="280" y2="158" stroke="#E5C148" strokeWidth="1.5" />
+                  <text x="340" y="151" fill="#9E9EA7" fontSize="9">mysql2/promise Pool</text>
+
+                  <rect x="20" y="158" width="520" height="48" fill="#18181C" stroke="#E5C148" />
+                  <text x="280" y="178" textAnchor="middle" fill="#E5C148" fontSize="10" fontWeight="700">
+                    DATA LAYER (XAMPP MYSQL / PHPMYADMIN)
+                  </text>
+                  <text x="280" y="194" textAnchor="middle" fill="#FFFFFF" fontSize="9.5">
+                    4 Bảng: categories · products · projects · contacts + Local Assets
+                  </text>
+                </svg>
+              </div>
+            </div>
+
+            {/* 04 Database ERD */}
+            <div className="bg-[#141417] border border-[#242429] p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <p className="text-[10px] font-semibold tracking-[0.1em] text-[#E5C148] uppercase">
+                    04 / SƠ ĐỒ CSDL ERD (4 BẢNG MYSQL)
+                  </p>
+                  <a
+                    href="/diagrams/04-database-erd.puml"
+                    download
+                    className="text-xs text-[#9E9EA7] hover:text-[#E5C148] transition-colors"
+                  >
+                    Tải .puml ↓
+                  </a>
+                </div>
+                <svg viewBox="0 0 560 220" className="w-full h-auto bg-[#0B0B0D] border border-[#1E1E24] p-2">
+                  {/* categories */}
+                  <rect x="20" y="16" width="210" height="86" fill="#141417" stroke="#E5C148" />
+                  <rect x="20" y="16" width="210" height="22" fill="#E5C148" />
+                  <text x="125" y="31" textAnchor="middle" fill="#0B0B0D" fontSize="10.5" fontWeight="700">categories</text>
+                  <text x="30" y="52" fill="#FFFFFF" fontSize="9">PK category_id : INT</text>
+                  <text x="30" y="67" fill="#D4D4D8" fontSize="9">category_name, slug (UQ)</text>
+                  <text x="30" y="82" fill="#9E9EA7" fontSize="9">description, created_at</text>
+
+                  {/* 1:N relation */}
+                  <line x1="230" y1="58" x2="295" y2="58" stroke="#E5C148" strokeWidth="1.5" />
+                  <text x="262" y="51" textAnchor="middle" fill="#E5C148" fontSize="9.5" fontWeight="700">1 : N</text>
+
+                  {/* products */}
+                  <rect x="295" y="16" width="245" height="94" fill="#141417" stroke="#E5C148" />
+                  <rect x="295" y="16" width="245" height="22" fill="#E5C148" />
+                  <text x="417" y="31" textAnchor="middle" fill="#0B0B0D" fontSize="10.5" fontWeight="700">products</text>
+                  <text x="305" y="52" fill="#FFFFFF" fontSize="9">PK product_id | FK category_id</text>
+                  <text x="305" y="67" fill="#D4D4D8" fontSize="9">product_name, model_code (UQ)</text>
+                  <text x="305" y="82" fill="#9E9EA7" fontSize="9">technical_specs (JSON), image_url</text>
+                  <text x="305" y="97" fill="#9E9EA7" fontSize="9">video_demo_url, is_featured, status</text>
+
+                  {/* projects */}
+                  <rect x="20" y="122" width="240" height="84" fill="#141417" stroke="#242429" />
+                  <rect x="20" y="122" width="240" height="22" fill="#18181C" />
+                  <text x="140" y="137" textAnchor="middle" fill="#E5C148" fontSize="10.5" fontWeight="700">projects</text>
+                  <text x="30" y="158" fill="#FFFFFF" fontSize="9">PK project_id : INT</text>
+                  <text x="30" y="173" fill="#D4D4D8" fontSize="9">event_name, client_name, location</text>
+                  <text x="30" y="188" fill="#9E9EA7" fontSize="9">event_date, equipment_used, thumb</text>
+
+                  {/* contacts */}
+                  <rect x="285" y="122" width="255" height="84" fill="#141417" stroke="#242429" />
+                  <rect x="285" y="122" width="255" height="22" fill="#18181C" />
+                  <text x="412" y="137" textAnchor="middle" fill="#E5C148" fontSize="10.5" fontWeight="700">contacts</text>
+                  <text x="295" y="158" fill="#FFFFFF" fontSize="9">PK contact_id : INT</text>
+                  <text x="295" y="173" fill="#D4D4D8" fontSize="9">customer_name, phone, company_agency</text>
+                  <text x="295" y="188" fill="#9E9EA7" fontSize="9">interested_categories, status ENUM</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-[#E5C148] p-8 sm:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#0B0B0D]">

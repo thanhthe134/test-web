@@ -1,0 +1,50 @@
+@startuml SquareSnake_UseCase
+left to right direction
+skinparam actorStyle awesome
+skinparam backgroundColor #0B0B0D
+skinparam defaultFontName "Plus Jakarta Sans"
+skinparam defaultFontColor #FFFFFF
+skinparam usecase {
+  BackgroundColor #141417
+  BorderColor #E5C148
+  FontColor #FFFFFF
+  ArrowColor #E5C148
+}
+skinparam rectangle {
+  BackgroundColor #111114
+  BorderColor #242429
+  FontColor #E5C148
+}
+
+actor "Khách hàng\n(Event Planner / Agency)" as Customer
+actor "Quản trị viên\n(Admin CMS)" as Admin
+
+rectangle "Hệ thống Website Showroom SquareSnake FX Việt Nam" {
+  usecase "UC01: Xem Trang chủ & Dòng thiết bị\n(LED Matrix, Laser, Kinetic)" as UC01
+  usecase "UC02: Lọc danh mục & Tìm kiếm thiết bị" as UC02
+  usecase "UC03: Xem chi tiết Model &\nThông số kỹ thuật (JSON specs)" as UC03
+  usecase "UC04: Xem Hồ sơ Dự án (Case Studies)\n& Trung tâm thông tin kỹ thuật" as UC04
+  usecase "UC05: Gửi Yêu cầu Báo giá\n(Request a Quote)" as UC05
+
+  usecase "UC06: Đăng nhập Quản trị viên\n(Admin Authentication)" as UC06
+  usecase "UC07: Quản lý Thiết bị (CRUD)\n& Tải lên Ảnh/Video demo" as UC07
+  usecase "UC08: Quản lý Dự án & Nội dung Website" as UC08
+  usecase "UC09: Xem Inbox & Cập nhật trạng thái\nbáo giá (pending / contacted / quoted)" as UC09
+}
+
+Customer --> UC01
+Customer --> UC02
+Customer --> UC03
+Customer --> UC04
+Customer --> UC05
+
+Admin --> UC06
+Admin --> UC07
+Admin --> UC08
+Admin --> UC09
+
+UC07 ..> UC06 : <<include>>
+UC08 ..> UC06 : <<include>>
+UC09 ..> UC06 : <<include>>
+UC03 ..> UC05 : <<extend>>
+@enduml

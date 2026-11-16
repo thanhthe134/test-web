@@ -18,7 +18,11 @@ router.get('/', async (req, res) => {
     const [rows] = await pool.query(sql, params);
     res.json({ success: true, count: rows.length, data: rows });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Lỗi tải danh sách báo giá.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi tải danh sách báo giá.',
+      error: error.message,
+    });
   }
 });
 
@@ -38,7 +42,7 @@ router.post('/', async (req, res) => {
     if (!customer_name || !phone || !interested_categories) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng nhập Họ tên, Số điện thoại và Nhóm thiết bị quan tâm.',
+        message: 'Vui lòng nhập Họ tên, Số điện thoại/Email và Nhóm thiết bị quan tâm.',
       });
     }
 
@@ -67,7 +71,11 @@ router.post('/', async (req, res) => {
       reference_code: `SS-BG-${String(result.insertId).padStart(4, '0')}`,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Không thể gửi yêu cầu báo giá.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Không thể gửi yêu cầu báo giá.',
+      error: error.message,
+    });
   }
 });
 
@@ -90,7 +98,28 @@ router.patch('/:id/status', async (req, res) => {
 
     res.json({ success: true, message: 'Đã cập nhật trạng thái xử lý báo giá.' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Lỗi cập nhật trạng thái.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi cập nhật trạng thái.',
+      error: error.message,
+    });
+  }
+});
+
+// DELETE /api/contacts/:id - Xóa yêu cầu báo giá
+router.delete('/:id', async (req, res) => {
+  try {
+    const [result] = await pool.query('DELETE FROM contacts WHERE contact_id = ?', [req.params.id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy yêu cầu báo giá.' });
+    }
+    res.json({ success: true, message: 'Đã xóa yêu cầu báo giá.' });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Không thể xóa yêu cầu báo giá.',
+      error: error.message,
+    });
   }
 });
 
